@@ -3,11 +3,11 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "CI=1 bunx expo start --web --clear",
+    "start": "CI=1 bunx expo start --web --clear --port 8085",
     "start-tunnel": "bunx rork start -p 9yk3d46hym1xnivsv25jr --tunnel",
     "start-web": "bunx rork start -p 9yk3d46hym1xnivsv25jr --web --tunnel",
     "start-web-dev": "DEBUG=expo* bunx rork start -p 9yk3d46hym1xnivsv25jr --web --tunnel",
-    "start-clean": "CI=1 bunx expo start --web --clear --port 8083"
+    "start-clean": "CI=1 bunx expo start --web --clear --port 8085"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
