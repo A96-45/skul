@@ -14,6 +14,7 @@ import AnnouncementCard from "@/components/AnnouncementCard";
 import AssignmentCard from "@/components/AssignmentCard";
 import EmptyState from "@/components/EmptyState";
 import Button from "@/components/Button";
+import TimetableWidget from "@/components/TimetableWidget";
 import { Announcement, Assignment, Unit } from "@/types";
 
 export default function DashboardScreen() {
@@ -127,7 +128,7 @@ export default function DashboardScreen() {
   };
 
   const renderLecturerDashboard = () => (
-    <ScrollView 
+    <ScrollView
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
     >
@@ -141,6 +142,9 @@ export default function DashboardScreen() {
           <Text style={styles.lecturerBadgeText}>Lecturer</Text>
         </View>
       </View>
+
+      {/* Timetable Widget for Lecturers */}
+      <TimetableWidget />
 
       {/* Quick Stats for Lecturers */}
       <View style={styles.statsContainer}>
@@ -238,7 +242,7 @@ export default function DashboardScreen() {
   );
 
   const renderStudentDashboard = () => (
-    <ScrollView 
+    <ScrollView
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
     >
@@ -252,6 +256,9 @@ export default function DashboardScreen() {
           <Text style={styles.studentBadgeText}>Student</Text>
         </View>
       </View>
+
+      {/* Timetable Widget for Students */}
+      <TimetableWidget />
 
       {/* Quick Stats for Students */}
       <View style={styles.statsContainer}>

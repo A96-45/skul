@@ -48,16 +48,23 @@ export const [AuthContext, useAuth] = createContextHook(() => {
   }, [user, initialized]);
 
   const login = async (email: string, password: string) => {
-    // In a real app, this would be an API call
-    // For demo purposes, we're using mock data
-    const foundUser = mockUsers.find(u => u.email === email);
-    
-    if (foundUser) {
-      setUser(foundUser);
-      return { success: true, user: foundUser };
+    try {
+      // TODO: Replace with actual tRPC call when backend is ready
+      // const result = await trpc.auth.login.mutate({ email, password });
+
+      // For now, still using mock data but with better structure
+      const foundUser = mockUsers.find(u => u.email === email);
+
+      if (foundUser) {
+        setUser(foundUser);
+        return { success: true, user: foundUser };
+      }
+
+      return { success: false, error: "Invalid credentials" };
+    } catch (error) {
+      console.error("Login error:", error);
+      return { success: false, error: "An error occurred during login" };
     }
-    
-    return { success: false, error: "Invalid credentials" };
   };
 
   const logout = async () => {

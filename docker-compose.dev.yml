@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # Backend API Service (Development)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: skola-backend-dev
+    ports:
+      - "3000:3000"
+      - "9229:9229"  # Debug port
+    env_file:
+      - docker.env
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - backend_data:/app/db
+    networks:
+      - skola-network
+    restart: unless-stopped
+
+  # Frontend Development Service
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: skola-frontend-dev
+    ports:
+      - "8085:8085"
+    environment:
+      - EXPO_PUBLIC_API_URL=http://backend:3000
+      - NODE_ENV=development
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - skola-network
+    restart: unless-stopped
+
+volumes:
+  backend_data:
+    driver: local
+
+networks:
+  skola-network:
+    driver: bridge

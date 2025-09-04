@@ -6,7 +6,6 @@ export const mockUsers: User[] = [
     name: "Dr. Jane Smith",
     email: "jane.smith@university.edu",
     role: "lecturer",
-    profilePicture: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
     department: "Computer Science",
   },
   {
@@ -14,7 +13,6 @@ export const mockUsers: User[] = [
     name: "Prof. Michael Johnson",
     email: "michael.johnson@university.edu",
     role: "lecturer",
-    profilePicture: "https://images.unsplash.com/photo-1560250097-0b93528c311a",
     department: "Engineering",
   },
   {
@@ -22,7 +20,6 @@ export const mockUsers: User[] = [
     name: "John Doe",
     email: "john.doe@student.university.edu",
     role: "student",
-    profilePicture: "https://images.unsplash.com/photo-1599566150163-29194dcaad36",
     admissionNumber: "CS2023001",
   },
   {
@@ -30,7 +27,6 @@ export const mockUsers: User[] = [
     name: "Sarah Williams",
     email: "sarah.williams@student.university.edu",
     role: "student",
-    profilePicture: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
     admissionNumber: "CS2023002",
   },
   {
@@ -38,7 +34,6 @@ export const mockUsers: User[] = [
     name: "David Chen",
     email: "david.chen@student.university.edu",
     role: "student",
-    profilePicture: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
     admissionNumber: "ENG2023001",
   },
 ];

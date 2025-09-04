@@ -5,7 +5,7 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
-  profilePicture?: string;
+  profilePicture?: string; // Will be set by user upload
   admissionNumber?: string; // For students
   department?: string; // For lecturers
 }

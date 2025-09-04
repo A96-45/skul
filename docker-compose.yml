@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # Backend API Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: skola-backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - docker.env
+    volumes:
+      - backend_data:/app/db
+    networks:
+      - skola-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend Web Service
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: skola-frontend
+    ports:
+      - "8080:8080"
+    environment:
+      - EXPO_PUBLIC_API_URL=http://backend:3000
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - skola-network
+    restart: unless-stopped
+
+  # Database Volume (for persistence)
+  db-init:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: skola-db-init
+    command: ["sh", "-c", "bun run db:generate && bun run db:push && echo 'Database initialized'"]
+    environment:
+      - DATABASE_URL=./db/skola.db
+    volumes:
+      - backend_data:/app/db
+    networks:
+      - skola-network
+    profiles:
+      - init
+
+volumes:
+  backend_data:
+    driver: local
+
+networks:
+  skola-network:
+    driver: bridge

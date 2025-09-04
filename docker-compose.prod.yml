@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  # Production Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: skola-backend-prod
+    ports:
+      - "3000:3000"
+    env_file:
+      - docker.env
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - backend_data:/app/db
+    networks:
+      - skola-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  # Production Frontend
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: skola-frontend-prod
+    ports:
+      - "80:8080"
+    environment:
+      - EXPO_PUBLIC_API_URL=http://backend:3000
+    depends_on:
+      - backend
+    networks:
+      - skola-network
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.10'
+          memory: 128M
+
+  # Nginx Load Balancer (Optional)
+  nginx:
+    image: nginx:alpine
+    container_name: skola-nginx
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./nginx/prod.conf:/etc/nginx/conf.d/default.conf
+      - ./ssl:/etc/ssl/certs
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - skola-network
+    restart: always
+    profiles:
+      - prod-ssl
+
+volumes:
+  backend_data:
+    driver: local
+
+networks:
+  skola-network:
+    driver: bridge

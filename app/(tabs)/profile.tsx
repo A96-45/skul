@@ -1,18 +1,65 @@
-import React from "react";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Image, ScrollView, StyleSheet, Text, View, Alert } from "react-native";
 import { useRouter } from "expo-router";
-import { AtSign, BookOpen, Hash, LogOut, User } from "lucide-react-native";
+import { AtSign, BookOpen, Hash, LogOut, User, Camera, ImageIcon, Edit3 } from "lucide-react-native";
 import Colors from "@/constants/colors";
 import Button from "@/components/Button";
 import { useAuth } from "@/hooks/auth-store";
+import { useProfilePhoto } from "@/hooks/use-profile-photo";
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, logout, updateProfile } = useAuth();
+  const { pickImage, takePhoto, isLoading: photoLoading } = useProfilePhoto();
+  const [showPhotoOptions, setShowPhotoOptions] = useState(false);
 
   const handleLogout = async () => {
     await logout();
     router.replace("/login");
+  };
+
+  const handlePhotoUpload = async (source: 'gallery' | 'camera') => {
+    try {
+      const imageUri = source === 'gallery'
+        ? await pickImage()
+        : await takePhoto();
+
+      if (imageUri) {
+        // In a real app, you would upload the image to a server and get back a URL
+        // For now, we'll just store the local URI
+        const result = updateProfile({ profilePicture: imageUri });
+        if (result.success) {
+          Alert.alert('Success', 'Profile photo updated successfully!');
+        } else {
+          Alert.alert('Error', 'Failed to update profile photo');
+        }
+      }
+      setShowPhotoOptions(false);
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+      Alert.alert('Error', 'Failed to upload photo');
+    }
+  };
+
+  const showPhotoOptionsAlert = () => {
+    Alert.alert(
+      'Choose Photo Source',
+      'Select how you want to add your profile photo',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Take Photo', onPress: () => handlePhotoUpload('camera') },
+        { text: 'Choose from Gallery', onPress: () => handlePhotoUpload('gallery') },
+      ]
+    );
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
   };
 
   return (
@@ -22,19 +69,61 @@ export default function ProfileScreen() {
     >
       <View style={styles.header}>
         <View style={styles.avatarContainer}>
-          <Image
-            source={{ 
-              uri: user?.profilePicture || 
-                "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2000" 
-            }}
-            style={styles.avatar}
-          />
+          {user?.profilePicture ? (
+            <Image
+              source={{ uri: user.profilePicture }}
+              style={styles.avatar}
+            />
+          ) : (
+            <View style={styles.avatarPlaceholder}>
+              <Text style={styles.avatarInitials}>
+                {user?.name ? getInitials(user.name) : 'U'}
+              </Text>
+            </View>
+          )}
+          <View style={styles.editPhotoButton}>
+            <Button
+              title=""
+              onPress={showPhotoOptionsAlert}
+              variant="primary"
+              size="small"
+              icon={<Edit3 size={16} color={Colors.white} />}
+              style={styles.editPhotoIcon}
+              loading={photoLoading}
+            />
+          </View>
         </View>
-        
+
         <Text style={styles.name}>{user?.name}</Text>
         <Text style={styles.role}>
           {user?.role === "lecturer" ? "Lecturer" : "Student"}
         </Text>
+
+        {!user?.profilePicture && (
+          <View style={styles.photoOptions}>
+            <Text style={styles.photoPrompt}>Add a profile photo</Text>
+            <View style={styles.photoButtons}>
+              <Button
+                title="Take Photo"
+                onPress={() => handlePhotoUpload('camera')}
+                variant="outline"
+                size="small"
+                icon={<Camera size={16} color={Colors.primary} />}
+                loading={photoLoading}
+                style={styles.photoButton}
+              />
+              <Button
+                title="Choose Photo"
+                onPress={() => handlePhotoUpload('gallery')}
+                variant="outline"
+                size="small"
+                icon={<ImageIcon size={16} color={Colors.primary} />}
+                loading={photoLoading}
+                style={styles.photoButton}
+              />
+            </View>
+          </View>
+        )}
       </View>
 
       <View style={styles.infoSection}>
@@ -123,11 +212,56 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
     marginBottom: 16,
+    position: 'relative',
   },
   avatar: {
     width: "100%",
     height: "100%",
     borderRadius: 60,
+  },
+  avatarPlaceholder: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 60,
+    backgroundColor: Colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarInitials: {
+    fontSize: 36,
+    fontWeight: "700" as const,
+    color: Colors.white,
+  },
+  editPhotoButton: {
+    position: 'absolute',
+    bottom: 4,
+    right: 4,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  editPhotoIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+  },
+  photoOptions: {
+    marginTop: 16,
+    alignItems: 'center',
+  },
+  photoPrompt: {
+    fontSize: 14,
+    color: Colors.darkGray,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  photoButtons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  photoButton: {
+    minWidth: 120,
   },
   name: {
     fontSize: 24,

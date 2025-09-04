@@ -1,5 +1,6 @@
-import { BundleInspector } from '../.rorkai/inspector';
-import { RorkErrorBoundary } from '../.rorkai/rork-error-boundary';
+// Development tools - can be enabled in development mode
+// import { BundleInspector } from '../.rorkai/inspector';
+// import { RorkErrorBoundary } from '../.rorkai/rork-error-boundary';
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
@@ -37,7 +38,7 @@ export default function RootLayout() {
     <AppProviders>
       <GestureHandlerRootView style={{ flex: 1 }}>
         {Platform.OS === "android" && <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />}
-        <BundleInspector><RorkErrorBoundary><RootLayoutNav /></RorkErrorBoundary></BundleInspector>
+        <RootLayoutNav />
       </GestureHandlerRootView>
     </AppProviders>
   );

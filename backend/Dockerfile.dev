@@ -1,0 +1,31 @@
+# Backend Development Dockerfile
+FROM node:18-alpine
+
+# Create app user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nextjs -u 1001
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json* ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Fix file permissions
+RUN chown -R nextjs:nodejs /app
+USER nextjs
+
+# Create database directory
+RUN mkdir -p db
+
+# Expose ports
+EXPOSE 3000 9229
+
+# Default command for development
+CMD ["npm", "run", "dev"]
