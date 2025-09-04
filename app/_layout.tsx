@@ -1,15 +1,11 @@
 import { BundleInspector } from '../.rorkai/inspector';
 import { RorkErrorBoundary } from '../.rorkai/rork-error-boundary';
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import { Platform, StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { AuthContext } from "@/hooks/auth-store";
-import { UnitsContext } from "@/hooks/units-store";
-import { trpc, trpcClient } from "@/lib/trpc";
+import { AppProviders } from "@/providers/app-providers";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();

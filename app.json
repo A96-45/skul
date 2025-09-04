@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "SchoolConnect: Student-Lecturer Communication App Clone",
-    "slug": "schoolconnect-ic39epx-ivsv25jr",
+    "name": "Skola",
+    "slug": "skola-ic39epx-ivsv25jr",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -15,14 +15,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "app.rork.schoolconnect-ic39epx-ivsv25jr"
+      "bundleIdentifier": "app.rork.skola"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "app.rork.schoolconnect-ic39epx-ivsv25jr"
+      "package": "app.rork.skola"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
