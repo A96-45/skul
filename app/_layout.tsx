@@ -10,11 +10,9 @@ import { AppProviders } from "@/providers/app-providers";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-const queryClient = new QueryClient();
-
 function RootLayoutNav() {
   return (
-    <Stack screenOptions={{ 
+    <Stack screenOptions={{
       headerBackTitle: "Back",
       headerStyle: {
         backgroundColor: "#FFFFFF",
@@ -26,7 +24,6 @@ function RootLayoutNav() {
       <Stack.Screen name="unit/[id]" options={{ headerShown: true, title: "Unit Details" }} />
       <Stack.Screen name="assignment/[id]" options={{ headerShown: true, title: "Assignment" }} />
       <Stack.Screen name="group/[id]" options={{ headerShown: true, title: "Group" }} />
-      <Stack.Screen name="edit-profile" options={{ headerShown: true, title: "Edit Profile" }} />
     </Stack>
   );
 }
@@ -37,19 +34,11 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <SafeAreaProvider>
-      <trpc.Provider client={trpcClient} queryClient={queryClient}>
-        <QueryClientProvider client={queryClient}>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <AuthContext>
-              <UnitsContext>
-                {Platform.OS === "android" && <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />}
-                <BundleInspector><RorkErrorBoundary><RootLayoutNav /></RorkErrorBoundary></BundleInspector>
-              </UnitsContext>
-            </AuthContext>
-          </GestureHandlerRootView>
-        </QueryClientProvider>
-      </trpc.Provider>
-    </SafeAreaProvider>
+    <AppProviders>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        {Platform.OS === "android" && <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />}
+        <BundleInspector><RorkErrorBoundary><RootLayoutNav /></RorkErrorBoundary></BundleInspector>
+      </GestureHandlerRootView>
+    </AppProviders>
   );
 }
