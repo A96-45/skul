@@ -8,6 +8,8 @@ import { useUnits } from "@/hooks/units-store";
 import AnnouncementCard from "@/components/AnnouncementCard";
 import DocumentCard from "@/components/DocumentCard";
 import AssignmentCard from "@/components/AssignmentCard";
+import PerformanceCard from "@/components/PerformanceCard";
+import ClassAlertModal from "@/components/ClassAlertModal";
 import EmptyState from "@/components/EmptyState";
 import { mockUsers } from "@/mocks/data";
 import { Announcement, Assignment, Document, Group, Unit } from "@/types";
@@ -16,13 +18,14 @@ export default function UnitDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { user } = useAuth();
-  const { 
-    getUnitById, 
-    getUnitDocuments, 
-    getUnitAnnouncements, 
+  const {
+    getUnitById,
+    getUnitDocuments,
+    getUnitAnnouncements,
     getUnitAssignments,
     getUnitGroups,
-    loading 
+    getStudentPerformance,
+    loading
   } = useUnits();
   
   const [unit, setUnit] = useState<Unit | undefined>();
@@ -30,21 +33,29 @@ export default function UnitDetailScreen() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [groups, setGroups] = useState<Group[]>([]);
+  const [performanceData, setPerformanceData] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<string>("announcements");
+  const [showClassAlertModal, setShowClassAlertModal] = useState(false);
 
   useEffect(() => {
     if (!loading && id) {
       const unitData = getUnitById(id);
       setUnit(unitData);
-      
+
       if (unitData) {
         setDocuments(getUnitDocuments(id));
         setAnnouncements(getUnitAnnouncements(id));
         setAssignments(getUnitAssignments(id));
         setGroups(getUnitGroups(id));
+
+        // Load performance data for students
+        if (user?.role === "student") {
+          const perfData = getStudentPerformance(user.id, id);
+          setPerformanceData(perfData);
+        }
       }
     }
-  }, [loading, id, getUnitById, getUnitDocuments, getUnitAnnouncements, getUnitAssignments, getUnitGroups]);
+  }, [loading, id, user?.id, user?.role, getUnitById, getUnitDocuments, getUnitAnnouncements, getUnitAssignments, getUnitGroups, getStudentPerformance]);
 
   const lecturer = unit ? mockUsers.find(u => u.id === unit.lecturerId) : undefined;
   const isLecturer = user?.role === "lecturer" && unit?.lecturerId === user.id;
@@ -70,6 +81,28 @@ export default function UnitDetailScreen() {
 
   const navigateToGroup = (groupId: string) => {
     router.push(`/group/${groupId}`);
+  };
+
+  const handleSendClassAlert = (alertData: any) => {
+    // Create an announcement from the alert
+    const announcement: Announcement = {
+      id: Math.random().toString(36).substring(2, 9),
+      unitId: alertData.unitId,
+      title: alertData.title,
+      content: `${alertData.message || ""}\n\n${
+        alertData.type === "online"
+          ? `📹 Online Class\nPlatform: ${alertData.platform}\nLink: ${alertData.meetingLink}${alertData.password ? `\nPassword: ${alertData.password}` : ""}${alertData.additionalInfo ? `\n\n${alertData.additionalInfo}` : ""}`
+          : `🏫 Physical Class\nVenue: ${alertData.venue}\nDate: ${alertData.date}\nTime: ${alertData.time}${alertData.requirements ? `\n\nRequirements: ${alertData.requirements}` : ""}${alertData.changes ? `\n\nChanges: ${alertData.changes}` : ""}`
+      }`,
+      createdBy: user?.id || "",
+      createdAt: Date.now(),
+      important: true,
+    };
+
+    // Add to announcements (in a real app, this would be sent to backend)
+    setAnnouncements(prev => [announcement, ...prev]);
+
+    alert(`Class alert "${alertData.title}" has been sent to all students!`);
   };
 
   if (loading || !unit) {
@@ -187,7 +220,7 @@ export default function UnitDetailScreen() {
                 size={16} 
                 color={activeTab === "groups" ? Colors.primary : Colors.darkGray} 
               />
-              <Text 
+              <Text
                 style={[
                   styles.tabText,
                   activeTab === "groups" && styles.activeTabText
@@ -196,6 +229,30 @@ export default function UnitDetailScreen() {
                 Groups
               </Text>
             </TouchableOpacity>
+
+            {/* Performance tab for students */}
+            {user?.role === "student" && (
+              <TouchableOpacity
+                style={[
+                  styles.tab,
+                  activeTab === "performance" && styles.activeTab
+                ]}
+                onPress={() => setActiveTab("performance")}
+              >
+                <Calendar
+                  size={16}
+                  color={activeTab === "performance" ? Colors.primary : Colors.darkGray}
+                />
+                <Text
+                  style={[
+                    styles.tabText,
+                    activeTab === "performance" && styles.activeTabText
+                  ]}
+                >
+                  Performance
+                </Text>
+              </TouchableOpacity>
+            )}
           </ScrollView>
         </View>
 
@@ -203,15 +260,27 @@ export default function UnitDetailScreen() {
           {activeTab === "announcements" && (
             <View>
               {isLecturer && (
-                <TouchableOpacity 
-                  style={styles.createButton}
-                  onPress={handleCreateAnnouncement}
-                >
-                  <Plus size={20} color={Colors.white} />
-                  <Text style={styles.createButtonText}>
-                    Create Announcement
-                  </Text>
-                </TouchableOpacity>
+                <View>
+                  <TouchableOpacity
+                    style={styles.createButton}
+                    onPress={handleCreateAnnouncement}
+                  >
+                    <Plus size={20} color={Colors.white} />
+                    <Text style={styles.createButtonText}>
+                      Create Announcement
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[styles.createButton, { backgroundColor: Colors.secondary, marginTop: 12 }]}
+                    onPress={() => setShowClassAlertModal(true)}
+                  >
+                    <Bell size={20} color={Colors.white} />
+                    <Text style={styles.createButtonText}>
+                      Send Class Alert
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               )}
               
               {announcements.length > 0 ? (
@@ -331,8 +400,32 @@ export default function UnitDetailScreen() {
               )}
             </View>
           )}
+
+          {/* Performance Tab for Students */}
+          {activeTab === "performance" && user?.role === "student" && (
+            <View>
+              {performanceData ? (
+                <PerformanceCard performance={performanceData} />
+              ) : (
+                <EmptyState
+                  title="No Performance Data"
+                  description="Your academic performance data will appear here once available"
+                  icon={<Calendar size={40} color={Colors.primary} />}
+                />
+              )}
+            </View>
+          )}
         </View>
       </ScrollView>
+
+      {/* Class Alert Modal */}
+      <ClassAlertModal
+        visible={showClassAlertModal}
+        onClose={() => setShowClassAlertModal(false)}
+        unitId={unit.id}
+        unitName={unit.name}
+        onSendAlert={handleSendClassAlert}
+      />
     </View>
   );
 }

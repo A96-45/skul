@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from "react-native";
+import { useRouter } from "expo-router";
 import { Clock, MapPin, BookOpen, Calendar } from "lucide-react-native";
 import Colors from "@/constants/colors";
 import { useAuth } from "@/hooks/auth-store";
@@ -24,6 +25,7 @@ interface TimetableWidgetProps {
 }
 
 export default function TimetableWidget({ showAll = false, compact = false }: TimetableWidgetProps) {
+  const router = useRouter();
   const { user } = useAuth();
   const { getUserUnits, loading } = useUnits();
   const [timetable, setTimetable] = useState<TimetableEntry[]>([]);
@@ -87,6 +89,16 @@ export default function TimetableWidget({ showAll = false, compact = false }: Ti
 
   const getTodaysClasses = () => {
     return timetable.filter(entry => entry.dayOfWeek === currentDay);
+  };
+
+  const handleClassPress = (entry: TimetableEntry) => {
+    if (user?.role === "student") {
+      // Students navigate to unit details
+      router.push(`/unit/${entry.unitId}`);
+    } else if (user?.role === "lecturer") {
+      // Lecturers navigate to unit details where they can create alerts
+      router.push(`/unit/${entry.unitId}`);
+    }
   };
 
   const getUpcomingClasses = () => {
@@ -161,7 +173,12 @@ export default function TimetableWidget({ showAll = false, compact = false }: Ti
       {todaysClasses.length > 0 ? (
         <ScrollView showsVerticalScrollIndicator={false}>
           {todaysClasses.map((entry) => (
-            <TouchableOpacity key={entry.id} style={styles.classCard}>
+            <TouchableOpacity
+              key={entry.id}
+              style={styles.classCard}
+              onPress={() => handleClassPress(entry)}
+              activeOpacity={0.7}
+            >
               <View style={styles.classHeader}>
                 <View style={styles.timeContainer}>
                   <Clock size={16} color={Colors.primary} />

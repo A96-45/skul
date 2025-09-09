@@ -1,8 +1,28 @@
+/**
+ * 🏠 DASHBOARD SCREEN - Main App Hub & Overview
+ *
+ * Purpose: Personalized dashboard showing relevant academic information
+ * Features:
+ * - Role-based content (Student vs Lecturer views)
+ * - Quick stats and metrics
+ * - Recent announcements and upcoming assignments
+ * - Timetable widget
+ * - Quick actions and shortcuts
+ * - Real-time data updates
+ *
+ * Layout: ScrollView with sections for different content types
+ * Data Flow: Auth Store → Units Store → Filtered content → UI
+ * Personalization: Different layouts for students vs lecturers
+ *
+ * @file app/(tabs)/index.tsx
+ * @location Main tab (home/dashboard) in bottom navigation
+ */
+
 import React, { useEffect, useState } from "react";
 import { FlatList, ScrollView, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { useRouter, Redirect } from "expo-router";
-import { 
-  Bell, BookOpen, Calendar, FileText, Plus, UserPlus, 
+import {
+  Bell, BookOpen, Calendar, FileText, Plus, UserPlus,
   Users, GraduationCap, TrendingUp, Clock, Award,
   MessageSquare, CheckCircle
 } from "lucide-react-native";

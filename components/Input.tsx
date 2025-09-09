@@ -1,3 +1,24 @@
+/**
+ * 📝 INPUT COMPONENT - Form Input with Validation
+ *
+ * Purpose: Reusable input component with validation and icons
+ * Features:
+ * - Label and placeholder support
+ * - Left and right icon support
+ * - Error state display
+ * - Validation feedback
+ * - Keyboard type options
+ * - Secure text entry for passwords
+ * - Multiline support
+ *
+ * Validation: Visual error states with red borders and error messages
+ * Icons: Lucide React Native icons for visual enhancement
+ * Accessibility: Proper labels and error announcements
+ *
+ * @file components/Input.tsx
+ * @location Used in all forms throughout Skola (login, profile, etc.)
+ */
+
 import React from "react";
 import { StyleSheet, Text, TextInput, TextInputProps, View } from "react-native";
 import Colors from "@/constants/colors";
@@ -23,17 +44,17 @@ export default function Input({
       
       <View style={[
         styles.inputContainer,
-        error && styles.inputContainerError,
-        props.editable === false && styles.inputContainerDisabled,
+        ...(error ? [styles.inputContainerError] : []),
+        ...(props.editable === false ? [styles.inputContainerDisabled] : []),
       ]}>
         {leftIcon && <View style={styles.leftIcon}>{leftIcon}</View>}
         
         <TextInput
           style={[
             styles.input,
-            leftIcon && styles.inputWithLeftIcon,
-            rightIcon && styles.inputWithRightIcon,
-            style,
+            ...(leftIcon ? [styles.inputWithLeftIcon] : []),
+            ...(rightIcon ? [styles.inputWithRightIcon] : []),
+            ...(style ? [style] : []),
           ]}
           placeholderTextColor={Colors.darkGray}
           {...props}

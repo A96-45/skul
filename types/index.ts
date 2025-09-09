@@ -1,3 +1,23 @@
+/**
+ * 📋 TYPE DEFINITIONS - Core Data Models for Skola
+ *
+ * Purpose: Centralized TypeScript definitions for all data structures
+ * Architecture: Defines the shape of all entities in the Skola ecosystem
+ * Usage: Imported throughout the app for type safety
+ *
+ * Key Entities:
+ * - User: Authentication and profile data
+ * - Unit: Course/unit information and metadata
+ * - Assignment: Coursework and grading data
+ * - Announcement: Communication and notifications
+ * - Document: File sharing and resources
+ * - Group: Student collaboration spaces
+ * - Notification: Real-time updates and alerts
+ *
+ * @file types/index.ts
+ * @location Core types imported by components, hooks, and stores
+ */
+
 export type UserRole = 'student' | 'lecturer';
 
 export interface User {

@@ -1,6 +1,21 @@
-// Development tools - can be enabled in development mode
-// import { BundleInspector } from '../.rorkai/inspector';
-// import { RorkErrorBoundary } from '../.rorkai/rork-error-boundary';
+/**
+ * 🎯 ROOT APP LAYOUT - Main Entry Point
+ *
+ * Purpose: Root layout component that wraps the entire Skola application
+ * Features:
+ * - Splash screen management
+ * - Global navigation setup (Stack)
+ * - Safe area handling
+ * - Gesture handler configuration
+ * - App-wide providers integration
+ *
+ * Navigation: Automatically routes to auth flow or main tabs based on auth state
+ * Dependencies: AppProviders, Expo Router, React Native Gesture Handler
+ *
+ * @file app/_layout.tsx
+ * @location Root layout (automatically loaded by Expo Router)
+ */
+
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
@@ -22,9 +37,6 @@ function RootLayoutNav() {
     }}>
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="unit/[id]" options={{ headerShown: true, title: "Unit Details" }} />
-      <Stack.Screen name="assignment/[id]" options={{ headerShown: true, title: "Assignment" }} />
-      <Stack.Screen name="group/[id]" options={{ headerShown: true, title: "Group" }} />
     </Stack>
   );
 }

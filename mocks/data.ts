@@ -7,6 +7,16 @@ export const mockUsers: User[] = [
     email: "jane.smith@university.edu",
     role: "lecturer",
     department: "Computer Science",
+    institution: {
+      id: "1",
+      name: "Machakos University",
+      type: "university",
+      location: "Machakos, Kenya",
+      domain: "university.edu",
+    },
+    yearOfStudy: "N/A",
+    studentId: "LECT001",
+    phoneNumber: "+254700123456",
   },
   {
     id: "2",
@@ -14,6 +24,16 @@ export const mockUsers: User[] = [
     email: "michael.johnson@university.edu",
     role: "lecturer",
     department: "Engineering",
+    institution: {
+      id: "1",
+      name: "Machakos University",
+      type: "university",
+      location: "Machakos, Kenya",
+      domain: "university.edu",
+    },
+    yearOfStudy: "N/A",
+    studentId: "LECT002",
+    phoneNumber: "+254700123457",
   },
   {
     id: "3",
@@ -21,6 +41,16 @@ export const mockUsers: User[] = [
     email: "john.doe@student.university.edu",
     role: "student",
     admissionNumber: "CS2023001",
+    institution: {
+      id: "1",
+      name: "Machakos University",
+      type: "university",
+      location: "Machakos, Kenya",
+      domain: "university.edu",
+    },
+    yearOfStudy: "Year 2",
+    studentId: "STU001",
+    phoneNumber: "+254700123458",
   },
   {
     id: "4",
@@ -28,6 +58,16 @@ export const mockUsers: User[] = [
     email: "sarah.williams@student.university.edu",
     role: "student",
     admissionNumber: "CS2023002",
+    institution: {
+      id: "1",
+      name: "Machakos University",
+      type: "university",
+      location: "Machakos, Kenya",
+      domain: "university.edu",
+    },
+    yearOfStudy: "Year 1",
+    studentId: "STU002",
+    phoneNumber: "+254700123459",
   },
   {
     id: "5",
@@ -35,6 +75,16 @@ export const mockUsers: User[] = [
     email: "david.chen@student.university.edu",
     role: "student",
     admissionNumber: "ENG2023001",
+    institution: {
+      id: "1",
+      name: "Machakos University",
+      type: "university",
+      location: "Machakos, Kenya",
+      domain: "university.edu",
+    },
+    yearOfStudy: "Year 3",
+    studentId: "STU003",
+    phoneNumber: "+254700123460",
   },
 ];
 
@@ -208,6 +258,59 @@ export const mockGroups: Group[] = [
   },
 ];
 
+export const mockPerformanceData = [
+  {
+    studentId: "3", // John Doe
+    unitId: "1",
+    overallGrade: 82,
+    assignmentsCompleted: 3,
+    totalAssignments: 5,
+    attendanceRate: 95,
+    trend: "up" as const,
+    lastUpdated: "2 hours ago",
+  },
+  {
+    studentId: "3", // John Doe
+    unitId: "3",
+    overallGrade: 88,
+    assignmentsCompleted: 2,
+    totalAssignments: 4,
+    attendanceRate: 100,
+    trend: "up" as const,
+    lastUpdated: "1 day ago",
+  },
+  {
+    studentId: "4", // Sarah Williams
+    unitId: "1",
+    overallGrade: 91,
+    assignmentsCompleted: 4,
+    totalAssignments: 5,
+    attendanceRate: 100,
+    trend: "stable" as const,
+    lastUpdated: "5 hours ago",
+  },
+  {
+    studentId: "4", // Sarah Williams
+    unitId: "4",
+    overallGrade: 85,
+    assignmentsCompleted: 1,
+    totalAssignments: 2,
+    attendanceRate: 90,
+    trend: "up" as const,
+    lastUpdated: "1 day ago",
+  },
+  {
+    studentId: "5", // David Chen
+    unitId: "2",
+    overallGrade: 76,
+    assignmentsCompleted: 1,
+    totalAssignments: 3,
+    attendanceRate: 75,
+    trend: "down" as const,
+    lastUpdated: "3 days ago",
+  },
+];
+
 export const mockSubmissions = [
   {
     id: "1",
@@ -216,6 +319,9 @@ export const mockSubmissions = [
     submittedAt: Date.now() - 2 * 24 * 60 * 60 * 1000,
     files: ["https://example.com/submission1.pdf"],
     comment: "Completed all requirements",
+    score: 85,
+    maxScore: 100,
+    feedback: "Excellent work! Good understanding of the concepts.",
   },
   {
     id: "2",
@@ -224,5 +330,8 @@ export const mockSubmissions = [
     submittedAt: Date.now() - 1 * 24 * 60 * 60 * 1000,
     files: ["https://example.com/submission2.pdf", "https://example.com/design.jpg"],
     comment: "Please review the design document as well",
+    score: 92,
+    maxScore: 150,
+    feedback: "Outstanding project! Great attention to detail.",
   },
 ];

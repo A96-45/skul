@@ -1,27 +1,29 @@
 # Dependencies
-node_modules
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# Production builds
-dist/
-build/
-.expo/
-.expo-shared/
+bun.lock
 
 # Environment files
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.development
+.env.production
+
+# Build outputs
+dist/
+build/
+web-build/
+.expo/
+.expo-shared/
 
 # IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
 # OS generated files
 .DS_Store
@@ -33,33 +35,33 @@ ehthumbs.db
 Thumbs.db
 
 # Git
-.git
+.git/
 .gitignore
 
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
 # Logs
-logs
+logs/
 *.log
 
 # Runtime data
-pids
+pids/
 *.pid
 *.seed
 *.pid.lock
 
-# Coverage directory
+# Coverage directory used by tools like istanbul
 coverage/
-
-# nyc test coverage
-.nyc_output
+.nyc_output/
 
 # Dependency directories
 jspm_packages/
 
 # Optional npm cache directory
 .npm
-
-# Optional eslint cache
-.eslintcache
 
 # Optional REPL history
 .node_repl_history
@@ -70,14 +72,30 @@ jspm_packages/
 # Yarn Integrity file
 .yarn-integrity
 
+# dotenv environment variables file
+.env
+
 # Temporary folders
 tmp/
 temp/
 
-# Backend files (not needed for frontend build)
-backend/
+# Cache directories
+.cache/
+.parcel-cache/
 
-# Docker files
-Dockerfile*
-docker-compose*
-.dockerignore
+# Development files
+README.md
+DEVELOPER_QUICK_START.md
+PROJECT_OVERVIEW.md
+PRODUCTION_DEPLOYMENT.md
+
+# Documentation
+*.md
+docs/
+
+# Test files
+__tests__/
+**/*.test.js
+**/*.test.ts
+**/*.spec.js
+**/*.spec.ts

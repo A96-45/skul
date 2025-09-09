@@ -91,7 +91,7 @@ export default function UserSearch({
 
       {isSearching && (
         <View style={styles.loading}>
-          <Button title="Searching..." loading variant="outline" size="small" />
+          <Button title="Searching..." loading variant="outline" size="small" onPress={() => {}} />
         </View>
       )}
     </View>

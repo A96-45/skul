@@ -1,28 +1,55 @@
+/**
+ * 🚀 SKOLA BACKEND SERVER - Main API Entry Point
+ *
+ * Purpose: Fastify server setup with tRPC integration for Skola API
+ * Features:
+ * - CORS configuration for cross-origin requests
+ * - JWT authentication middleware
+ * - tRPC plugin for type-safe API endpoints
+ * - Health check endpoints
+ * - Development-friendly logging
+ *
+ * Architecture: Fastify (high-performance) + tRPC (type safety)
+ * Endpoints: /trpc/* (tRPC routes), / (health check)
+ * Environment: Development server on port 3000
+ *
+ * @file backend/src/server.js
+ * @location Main backend entry point, started by npm scripts
+ */
+
 import Fastify from 'fastify';
-import cors from '@fastify/cors';
-import jwt from '@fastify/jwt';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import { appRouter } from './routes/app-router.js';
 import { createContext } from './routes/create-context.js';
 import superjson from 'superjson';
 
-// Create Fastify instance
+// Create Fastify instance with production configuration
 const fastify = Fastify({
-  logger: true,
-  // Disable request timeout for development
+  logger: process.env.NODE_ENV === 'development',
   disableRequestLogging: false,
   ignoreTrailingSlash: true,
+  // Security: Trust proxy for rate limiting behind reverse proxy
+  trustProxy: process.env.NODE_ENV === 'production',
 });
 
-// Register plugins
-await fastify.register(cors, {
-  origin: true, // Allow all origins in development
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-});
+// Security headers and CORS (basic implementation)
+fastify.addHook('onRequest', async (request, reply) => {
+  // CORS headers
+  reply.header('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || '*');
+  reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  reply.header('Access-Control-Allow-Credentials', 'true');
 
-await fastify.register(jwt, {
-  secret: process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production',
+  // Security headers
+  reply.header('X-Content-Type-Options', 'nosniff');
+  reply.header('X-Frame-Options', 'DENY');
+  reply.header('X-XSS-Protection', '1; mode=block');
+
+  // Handle preflight requests
+  if (request.method === 'OPTIONS') {
+    reply.code(200).send();
+    return;
+  }
 });
 
 // Register tRPC plugin

@@ -5,6 +5,7 @@ import { AlertTriangle, BookOpen, Hash, Info, Clock, MapPin, UserPlus, Mail } fr
 import Colors from "@/constants/colors";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
+import DateTimePicker from "@/components/DateTimePicker";
 import { useAuth } from "@/hooks/auth-store";
 import { useUnits } from "@/hooks/units-store";
 
@@ -156,17 +157,16 @@ export default function CreateScreen() {
           leftIcon={<BookOpen size={20} color={Colors.darkGray} />}
         />
 
-        <Input
+        <DateTimePicker
           label="Class Time"
-          placeholder="e.g., 10:00 AM - 12:00 PM"
           value={time}
-          onChangeText={setTime}
-          error={errors.time}
-          leftIcon={<Clock size={20} color={Colors.darkGray} />}
+          onChange={setTime}
+          mode="time"
+          placeholder="Select class time"
         />
 
         <Input
-          label="Class Date/Schedule"
+          label="Class Schedule"
           placeholder="e.g., Monday, Wednesday, Friday"
           value={date}
           onChangeText={setDate}

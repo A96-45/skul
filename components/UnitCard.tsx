@@ -1,3 +1,23 @@
+/**
+ * 📚 UNIT CARD COMPONENT - Course Display Card
+ *
+ * Purpose: Visual representation of a university unit/course
+ * Features:
+ * - Unit information display (code, name, description)
+ * - Student count and enrollment status
+ * - Schedule information (time, date, venue)
+ * - Lecturer and creator information
+ * - Navigation to unit details on press
+ * - Role-based visual indicators
+ *
+ * Data Flow: Unit object → Visual card → Navigation to unit/[id]
+ * Visual Design: Card-based layout with primary color accents
+ * Navigation: Expo Router navigation to dynamic unit routes
+ *
+ * @file components/UnitCard.tsx
+ * @location Used in units list, discover screen, and dashboard
+ */
+
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";

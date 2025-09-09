@@ -1,8 +1,10 @@
-import { createTRPCReact } from "@trpc/react-query";
-import type { AppRouter } from "@/backend/trpc/app-router";
-import superjson from "superjson";
+// Frontend tRPC client configuration for Skola
 
-// Only export the type-safe react hooks creator
-export const trpc = createTRPCReact<AppRouter>({
-  transformer: superjson,
-});
+import { createTRPCReact } from '@trpc/react-query';
+import type { AppRouter } from '@/types/api';
+
+// Create the tRPC client
+export const trpc = createTRPCReact<AppRouter>();
+
+// Export the client instance
+export { type AppRouter };

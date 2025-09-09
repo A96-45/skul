@@ -1,8 +1,28 @@
+/**
+ * 📚 UNITS STORE - Course & Academic Data Management
+ *
+ * Purpose: Centralized data management for all academic content in Skola
+ * Features:
+ * - Units (courses) management and enrollment
+ * - Assignments creation, submission, and grading
+ * - Announcements and notifications
+ * - Document sharing and management
+ * - Study groups and collaboration
+ * - Role-based access control for lecturers vs students
+ *
+ * Data Sources: Mock data (currently), will integrate with tRPC API
+ * Architecture: Context hook pattern with CRUD operations
+ * State: Units, assignments, announcements, documents, groups
+ *
+ * @file hooks/units-store.ts
+ * @location Used by dashboard, units screen, and academic features
+ */
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import createContextHook from "@nkzw/create-context-hook";
 import { useEffect, useState } from "react";
 import { Announcement, Assignment, Document, Group, Unit } from "@/types";
-import { mockAnnouncements, mockAssignments, mockDocuments, mockGroups, mockUnits } from "@/mocks/data";
+import { mockAnnouncements, mockAssignments, mockDocuments, mockGroups, mockUnits, mockPerformanceData } from "@/mocks/data";
 import { useAuth } from "./auth-store";
 
 export const [UnitsContext, useUnits] = createContextHook(() => {
@@ -12,6 +32,7 @@ export const [UnitsContext, useUnits] = createContextHook(() => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [groups, setGroups] = useState<Group[]>([]);
+  const [performanceData, setPerformanceData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Load data from storage or mock data on mount
@@ -25,6 +46,7 @@ export const [UnitsContext, useUnits] = createContextHook(() => {
         setAnnouncements(mockAnnouncements);
         setAssignments(mockAssignments);
         setGroups(mockGroups);
+        setPerformanceData(mockPerformanceData);
       } catch (error) {
         console.error("Failed to load data:", error);
       } finally {
@@ -254,6 +276,39 @@ export const [UnitsContext, useUnits] = createContextHook(() => {
     return groups.filter(group => group.unitId === unitId);
   };
 
+  // Get performance data for a specific student and unit
+  const getStudentPerformance = (studentId: string, unitId: string) => {
+    return performanceData.find(
+      perf => perf.studentId === studentId && perf.unitId === unitId
+    );
+  };
+
+  // Get all performance data for a student
+  const getStudentPerformanceData = (studentId: string) => {
+    return performanceData.filter(perf => perf.studentId === studentId);
+  };
+
+  // Calculate overall performance summary for a student
+  const getStudentOverallPerformance = (studentId: string) => {
+    const studentPerf = getStudentPerformanceData(studentId);
+    if (studentPerf.length === 0) return null;
+
+    const totalUnits = studentPerf.length;
+    const avgGrade = studentPerf.reduce((sum, perf) => sum + perf.overallGrade, 0) / totalUnits;
+    const totalAssignments = studentPerf.reduce((sum, perf) => sum + perf.totalAssignments, 0);
+    const completedAssignments = studentPerf.reduce((sum, perf) => sum + perf.assignmentsCompleted, 0);
+    const avgAttendance = studentPerf.reduce((sum, perf) => sum + perf.attendanceRate, 0) / totalUnits;
+
+    return {
+      totalUnits,
+      averageGrade: Math.round(avgGrade),
+      totalAssignments,
+      completedAssignments,
+      averageAttendance: Math.round(avgAttendance),
+      assignmentCompletionRate: totalAssignments > 0 ? Math.round((completedAssignments / totalAssignments) * 100) : 0,
+    };
+  };
+
   return {
     loading,
     units,
@@ -261,6 +316,7 @@ export const [UnitsContext, useUnits] = createContextHook(() => {
     announcements,
     assignments,
     groups,
+    performanceData,
     getUserUnits,
     createUnit,
     joinUnit,
@@ -274,5 +330,8 @@ export const [UnitsContext, useUnits] = createContextHook(() => {
     getUnitAnnouncements,
     getUnitAssignments,
     getUnitGroups,
+    getStudentPerformance,
+    getStudentPerformanceData,
+    getStudentOverallPerformance,
   };
 });

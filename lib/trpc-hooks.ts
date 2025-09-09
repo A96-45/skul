@@ -1,33 +1,18 @@
-import { createTRPCReact } from "@trpc/react-query";
-import type { AppRouter } from "@/backend/trpc/app-router";
-import superjson from "superjson";
+// Simplified tRPC hooks for development
+// These are mock implementations - replace with actual tRPC when backend is ready
 
-// Create TRPC hooks
-export const trpc = createTRPCReact<AppRouter>({
-  transformer: superjson,
+export const useAuthTRPC = () => ({
+  // Mock implementations for development
+  login: { mutateAsync: async () => ({ success: true }) },
+  register: { mutateAsync: async () => ({ success: true }) },
+  getProfile: { data: null, isLoading: false },
 });
 
-// Export individual hooks for use in components
-export const {
-  useQuery: useTRPCQuery,
-  useMutation: useTRPCMutation,
-  useInfiniteQuery: useTRPCInfiniteQuery,
-} = trpc;
-
-// Auth hooks
-export const useAuth = () => ({
-  login: trpc.auth.login.useMutation,
-  register: trpc.auth.register.useMutation,
-  getProfile: trpc.auth.getProfile.useQuery,
-});
-
-// Timetable hooks
 export const useTimetable = () => ({
-  getTimetable: trpc.timetable.get.useQuery,
-  createEntry: trpc.timetable.create.useMutation,
+  getTimetable: { data: null, isLoading: false },
+  createEntry: { mutateAsync: async () => ({ success: true }) },
 });
 
-// Example hooks
 export const useExample = () => ({
-  hello: trpc.example.hi.useQuery,
+  hello: { data: { message: "Hello from tRPC!", timestamp: new Date().toISOString() }, isLoading: false },
 });

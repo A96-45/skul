@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { BookOpen, Home, Plus, Search, Settings, Users, Calendar, GraduationCap } from "lucide-react-native";
+import { BookOpen, Home, Plus, Search, Settings, Users } from "lucide-react-native";
 import React from "react";
 import { Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -41,21 +41,19 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Dashboard",
+          title: "Home",
           tabBarIcon: ({ color }) => <Home size={24} color={color} />,
         }}
       />
-      
+
       <Tabs.Screen
         name="units"
         options={{
-          title: isLecturer ? "My Units" : "Units",
-          tabBarIcon: ({ color }) => isLecturer 
-            ? <GraduationCap size={24} color={color} />
-            : <BookOpen size={24} color={color} />,
+          title: "Units",
+          tabBarIcon: ({ color }) => <BookOpen size={24} color={color} />,
         }}
       />
-      
+
       <Tabs.Screen
         name="create"
         options={{
@@ -63,15 +61,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <Plus size={24} color={color} />,
         }}
       />
-      
-      <Tabs.Screen
-        name="discover"
-        options={{
-          title: isLecturer ? "Invitations" : "Discover",
-          tabBarIcon: ({ color }) => <Search size={24} color={color} />,
-        }}
-      />
-      
+
       <Tabs.Screen
         name="groups"
         options={{
@@ -79,12 +69,48 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <Users size={24} color={color} />,
         }}
       />
-      
+
+      <Tabs.Screen
+        name="discover"
+        options={{
+          title: "Discover",
+          tabBarIcon: ({ color }) => <Search size={24} color={color} />,
+        }}
+      />
+
       <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
           tabBarIcon: ({ color }) => <Settings size={24} color={color} />,
+        }}
+      />
+
+      {/* Hidden screens for navigation */}
+      <Tabs.Screen
+        name="unit/[id]"
+        options={{
+          href: null, // Hide from tab bar
+          headerShown: true,
+          title: "Unit Details",
+        }}
+      />
+
+      <Tabs.Screen
+        name="assignment/[id]"
+        options={{
+          href: null, // Hide from tab bar
+          headerShown: true,
+          title: "Assignment Details",
+        }}
+      />
+
+      <Tabs.Screen
+        name="group/[id]"
+        options={{
+          href: null, // Hide from tab bar
+          headerShown: true,
+          title: "Group Details",
         }}
       />
     </Tabs>

@@ -1,51 +1,184 @@
+# Skola Development Docker Setup
+# Development environment with hot reloading and volume mounts
+
 version: '3.8'
 
 services:
-  # Backend API Service (Development)
+  # PostgreSQL Database (Development)
+  postgres:
+    image: postgres:16-alpine
+    container_name: skola-postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: skola_dev
+      POSTGRES_USER: skola_user
+      POSTGRES_PASSWORD: skola_password_2024_secure
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./backend/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5433:5432"  # Different port for dev to avoid conflicts
+    networks:
+      - skola-dev-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U skola_user -d skola_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Backend API Server (Development with hot reload)
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
+      target: development
     container_name: skola-backend-dev
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://skola_user:skola_password_2024_secure@postgres:5432/skola_dev
+      - JWT_SECRET=skola_development_jwt_secret_key_2024_min_64_chars_long_for_dev
+      - PORT=3000
+      - LOG_LEVEL=debug
+      - CORS_ORIGIN=http://localhost:8085,http://localhost:3000,http://frontend:8085
+      - UPLOAD_DIR=/app/uploads
+      - MAX_FILE_SIZE=10485760
+      - DEBUG=true
     ports:
       - "3000:3000"
-      - "9229:9229"  # Debug port
-    env_file:
-      - docker.env
-    environment:
-      - NODE_ENV=development
     volumes:
-      - ./backend:/app
-      - /app/node_modules
-      - backend_data:/app/db
+      # Mount source code for hot reloading
+      - ./backend/src:/app/src:ro
+      - ./backend/db:/app/db:ro
+      - ./backend/uploads:/app/uploads
+      - ./backend/logs:/app/logs
+      # Mount package files for dependency changes
+      - ./backend/package.json:/app/package.json:ro
+      - ./backend/package-lock.json:/app/package-lock.json:ro
+      - ./backend/bun.lock:/app/bun.lock:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
-      - skola-network
-    restart: unless-stopped
+      - skola-dev-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health/check"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    command: ["npm", "run", "dev"]
 
-  # Frontend Development Service
+  # Frontend Development Server (with Expo)
   frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
+    image: node:18-alpine
     container_name: skola-frontend-dev
-    ports:
-      - "8085:8085"
+    restart: unless-stopped
+    working_dir: /app
     environment:
-      - EXPO_PUBLIC_API_URL=http://backend:3000
       - NODE_ENV=development
+      - EXPO_PUBLIC_API_URL=http://backend:3000
+      - EXPO_PUBLIC_TRPC_URL=http://backend:3000/trpc
+      - EXPO_PUBLIC_NODE_ENV=development
+      - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
+    ports:
+      - "8085:8085"  # Expo web port
+      - "19000:19000"  # Expo dev tools
+      - "19001:19001"  # Expo dev tools
+      - "19002:19002"  # Expo dev tools
     volumes:
-      - .:/app
+      # Mount source code for hot reloading
+      - .:/app:cached
       - /app/node_modules
+      - /app/.expo
+      - /app/.expo-shared
     depends_on:
       - backend
     networks:
-      - skola-network
+      - skola-dev-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8085"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    command: >
+      sh -c "
+        npm install &&
+        npx expo install --fix &&
+        npx expo start --web --port 8085 --host 0.0.0.0 --clear
+      "
+
+  # Redis for development (optional)
+  redis:
+    image: redis:7-alpine
+    container_name: skola-redis-dev
     restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "6380:6379"  # Different port for dev
+    volumes:
+      - redis_dev_data:/data
+    networks:
+      - skola-dev-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    profiles:
+      - with-cache
+
+  # PgAdmin for database management (optional)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: skola-pgadmin-dev
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@skola.dev
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - skola-dev-network
+    profiles:
+      - with-admin
+
+  # Development Nginx (optional reverse proxy)
+  nginx-dev:
+    image: nginx:alpine
+    container_name: skola-nginx-dev
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/dev.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - skola-dev-network
+    profiles:
+      - with-proxy
 
 volumes:
-  backend_data:
+  postgres_dev_data:
+    driver: local
+  redis_dev_data:
+    driver: local
+  pgadmin_data:
     driver: local
 
 networks:
-  skola-network:
+  skola-dev-network:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16

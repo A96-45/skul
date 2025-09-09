@@ -1,5 +1,25 @@
+/**
+ * 🎛️ BUTTON COMPONENT - Universal Interactive Element
+ *
+ * Purpose: Reusable button component with multiple variants and states
+ * Features:
+ * - Multiple variants: primary, secondary, outline, text
+ * - Size variants: small, medium, large
+ * - Loading states with spinner
+ * - Icon support (left side)
+ * - Full-width option
+ * - Disabled state handling
+ *
+ * Usage: Used throughout Skola for all interactive elements
+ * Variants: primary (blue), secondary (teal), outline, text
+ * Accessibility: Proper disabled states and loading indicators
+ *
+ * @file components/Button.tsx
+ * @location Used in forms, navigation, and interactive elements
+ */
+
 import React from "react";
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View, ViewStyle, TextStyle } from "react-native";
 import Colors from "@/constants/colors";
 
 interface ButtonProps {
@@ -11,6 +31,7 @@ interface ButtonProps {
   loading?: boolean;
   icon?: React.ReactNode;
   fullWidth?: boolean;
+  style?: ViewStyle;
 }
 
 export default function Button({
@@ -22,10 +43,11 @@ export default function Button({
   loading = false,
   icon,
   fullWidth = false,
+  style,
 }: ButtonProps) {
-  const getButtonStyle = () => {
-    const baseStyle = [styles.button];
-    
+  const getButtonStyle = (): ViewStyle[] => {
+    const baseStyle: ViewStyle[] = [styles.button];
+
     if (size === "small") baseStyle.push(styles.small);
     if (size === "large") baseStyle.push(styles.large);
     if (variant === "primary") baseStyle.push(styles.primary);
@@ -34,13 +56,14 @@ export default function Button({
     if (variant === "text") baseStyle.push(styles.textVariant);
     if (disabled) baseStyle.push(styles.disabled);
     if (fullWidth) baseStyle.push(styles.fullWidth);
-    
+    if (style) baseStyle.push(style);
+
     return baseStyle;
   };
-  
-  const getTextStyle = () => {
-    const baseStyle = [styles.buttonText];
-    
+
+  const getTextStyle = (): TextStyle[] => {
+    const baseStyle: TextStyle[] = [styles.buttonText];
+
     if (size === "small") baseStyle.push(styles.textSmall);
     if (size === "large") baseStyle.push(styles.textLarge);
     if (variant === "primary") baseStyle.push(styles.textPrimary);
@@ -48,7 +71,7 @@ export default function Button({
     if (variant === "outline") baseStyle.push(styles.textOutline);
     if (variant === "text") baseStyle.push(styles.textText);
     if (disabled) baseStyle.push(styles.textDisabled);
-    
+
     return baseStyle;
   };
 

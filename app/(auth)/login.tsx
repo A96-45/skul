@@ -1,7 +1,26 @@
+/**
+ * 🔑 LOGIN SCREEN - User Authentication Entry Point
+ *
+ * Purpose: Authenticate users and route them to appropriate flows
+ * Features:
+ * - Email/password login form
+ * - Form validation and error handling
+ * - Demo accounts for testing
+ * - Automatic routing based on profile completion
+ * - Responsive design for mobile/web
+ *
+ * Flow: Login → Profile Check → Role Select/Profile Setup → Main App
+ * Authentication: Currently uses mock data (will integrate with tRPC)
+ * Navigation: Conditional routing based on user profile state
+ *
+ * @file app/(auth)/login.tsx
+ * @location Authentication flow entry point
+ */
+
 import React, { useState } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
-import { AtSign, Lock } from "lucide-react-native";
+import { AtSign, Lock, Building, MapPin } from "lucide-react-native";
 import Colors from "@/constants/colors";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
@@ -9,12 +28,23 @@ import { useAuth } from "@/hooks/auth-store";
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { login } = useAuth();
-  
+  const { login, getInstitutionByEmail } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [detectedInstitution, setDetectedInstitution] = useState<any>(null);
+
+  // Detect institution based on email domain
+  React.useEffect(() => {
+    if (email.includes('@')) {
+      const institution = getInstitutionByEmail(email);
+      setDetectedInstitution(institution);
+    } else {
+      setDetectedInstitution(null);
+    }
+  }, [email, getInstitutionByEmail]);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -91,6 +121,21 @@ export default function LoginScreen() {
           secureTextEntry
           leftIcon={<Lock size={20} color={Colors.darkGray} />}
         />
+
+        {/* Institution Information */}
+        {detectedInstitution && (
+          <View style={styles.institutionCard}>
+            <View style={styles.institutionHeader}>
+              <Building size={20} color={Colors.primary} />
+              <Text style={styles.institutionTitle}>Institution Detected</Text>
+            </View>
+            <Text style={styles.institutionName}>{detectedInstitution.name}</Text>
+            <View style={styles.institutionDetails}>
+              <MapPin size={14} color={Colors.darkGray} />
+              <Text style={styles.institutionLocation}>{detectedInstitution.location}</Text>
+            </View>
+          </View>
+        )}
 
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
@@ -188,5 +233,40 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     gap: 16,
+  },
+  institutionCard: {
+    backgroundColor: Colors.lightGray,
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 16,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: Colors.primary,
+  },
+  institutionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+    gap: 8,
+  },
+  institutionTitle: {
+    fontSize: 14,
+    fontWeight: "600" as const,
+    color: Colors.primary,
+  },
+  institutionName: {
+    fontSize: 16,
+    fontWeight: "700" as const,
+    color: Colors.text,
+    marginBottom: 4,
+  },
+  institutionDetails: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  institutionLocation: {
+    fontSize: 14,
+    color: Colors.darkGray,
   },
 });

@@ -1,10 +1,34 @@
 # 🎓 Skola - University Communication Platform
 
+**"Your Complete University Management Solution"**
+
+[![📋 Project Overview](https://img.shields.io/badge/📋_Project_Overview-PROJECT_OVERVIEW.md-blue?style=for-the-badge)](PROJECT_OVERVIEW.md)
+[![📖 Developer Guide](https://img.shields.io/badge/📖_Developer_Guide-Developer.md-green?style=for-the-badge)](Developer.md)
+[![🚀 Production Ready](https://img.shields.io/badge/🚀_Production_Deployment-PRODUCTION_DEPLOYMENT.md-red?style=for-the-badge)](PRODUCTION_DEPLOYMENT.md)
+
 A comprehensive fullstack application for university communication, built with React Native (Expo), Fastify, tRPC, and SQLite.
 
-## 🚀 Quick Start Guide
+## 📊 **Current Status: Development → Production Ready**
 
-**Choose your preferred setup method:**
+### ✅ **What's Working Now**
+- ✅ **Real Database Integration** - SQLite with Drizzle ORM
+- ✅ **JWT Authentication** - Secure user registration/login
+- ✅ **Cross-Platform Support** - Mobile (iOS/Android) + Web
+- ✅ **Expo Tunnel Working** - QR code generation for mobile testing
+- ✅ **Clean Architecture** - Well-organized, documented codebase
+- ✅ **Type-Safe APIs** - tRPC with end-to-end TypeScript
+
+### ⚠️ **Production Readiness Checklist**
+- 🔄 **Database**: SQLite → PostgreSQL (for scalability)
+- 🔄 **Security**: Add rate limiting, security headers
+- 🔄 **File Storage**: Cloud storage for user uploads
+- 🔄 **Monitoring**: Logging and error tracking
+- 🔄 **Backup**: Automated data backup system
+- 🔄 **CI/CD**: Automated testing and deployment
+
+**📖 [Complete Production Guide](PRODUCTION_DEPLOYMENT.md)**
+
+## 🚀 Quick Start Guide
 
 ### ⚡ Method 1: One-Command Setup (Recommended)
 ```bash
@@ -14,7 +38,13 @@ chmod +x setup.sh start.sh stop.sh
 ./setup.sh
 ./start.sh
 ```
-**That's it!** Your app will be running at `http://localhost:8085`
+**That's it! 🎉** Your app will be running at `http://localhost:8085`
+
+### 📖 Method 2: Developer Quick Start
+For a detailed development setup guide:
+- **[🚀 Developer Quick Start](DEVELOPER_QUICK_START.md)** - Get coding in 5 minutes
+- **[📋 Project Overview](PROJECT_OVERVIEW.md)** - Complete project understanding
+- **[📖 Technical Guide](Developer.md)** - Detailed technical documentation
 
 ---
 
@@ -83,22 +113,112 @@ chmod +x start.sh stop.sh
 ./stop.sh
 ```
 
-### 🐳 Method 3: Docker Setup (Alternative)
+### 🐳 Method 3: Docker Setup (Recommended for Production)
 
-If you prefer Docker:
+Docker provides the easiest way to deploy and run Skola anywhere!
 
+#### 🚀 Quick Docker Start
 ```bash
-# Build and run with Docker
-docker-compose -f docker-compose.dev.yml up --build
+# Clone and setup
+git clone <repository-url>
+cd skola
 
-# Or use the npm script
-bun run docker:dev
+# One-command setup and deployment
+./setup.sh --docker
+./deploy.sh
 ```
 
-**Access URLs:**
-- **Web App**: http://localhost:8085
-- **API**: http://localhost:3000
-- **Mobile**: Use Expo Go app and scan QR code
+**That's it! 🎉** Your complete Skola system will be running with:
+- **Frontend**: http://localhost:8085
+- **Backend API**: http://localhost:3000
+- **Database**: PostgreSQL on port 5432
+- **Admin Panel**: http://localhost:5050 (PgAdmin)
+
+#### 🐳 Docker Options
+
+**Development with Docker:**
+```bash
+# Start development environment with hot reload
+docker-compose -f docker-compose.dev.yml up -d
+
+# View status and logs
+docker-compose -f docker-compose.dev.yml ps
+docker-compose -f docker-compose.dev.yml logs -f
+```
+
+**Production Deployment:**
+```bash
+# Start production environment
+docker-compose up -d --build
+
+# Check health
+curl http://localhost:3000/health/check
+curl http://localhost:8085/health
+```
+
+**Docker Management:**
+```bash
+# Stop all services
+docker-compose down
+
+# Clean restart (removes volumes)
+docker-compose down -v && docker-compose up -d --build
+
+# View logs for specific service
+docker-compose logs -f backend
+docker-compose logs -f frontend
+```
+
+#### 🐳 Advanced Docker Features
+
+**With Redis Caching:**
+```bash
+# Start with Redis for improved performance
+docker-compose --profile with-cache up -d
+```
+
+**With Database Admin:**
+```bash
+# Start with PgAdmin for database management
+docker-compose -f docker-compose.dev.yml --profile with-admin up -d
+```
+
+**With Reverse Proxy:**
+```bash
+# Start with Nginx reverse proxy
+docker-compose -f docker-compose.dev.yml --profile with-proxy up -d
+```
+
+#### 🐳 Environment Configuration
+
+**For Development:**
+```bash
+# Copy and customize
+cp .env.example .env
+
+# Edit with your settings
+nano .env
+```
+
+**For Production:**
+```bash
+# Use production environment
+cp .env.example .env.production
+
+# ⚠️ IMPORTANT: Change these values for production:
+# - DATABASE_URL: Use strong password
+# - JWT_SECRET: Use 64+ character random string
+# - CORS_ORIGIN: Restrict to your domain
+```
+
+#### 🐳 Docker Benefits
+
+✅ **Easy Deployment** - Works on any computer with Docker
+✅ **Production Ready** - Optimized containers with health checks
+✅ **Database Included** - PostgreSQL with automatic setup
+✅ **Development Features** - Hot reload, debugging, admin tools
+✅ **Scalable** - Easy to deploy to cloud platforms
+✅ **Isolated** - No dependency conflicts with your system
 
 ---
 
@@ -297,39 +417,94 @@ const { data } = trpc.newFeature.getData.useQuery()
 
 ## 🚀 Deployment Options
 
-### Web Deployment
+### 🐳 Docker Deployment (Recommended)
+
+**One-Command Production Deployment:**
+```bash
+# Setup and deploy everything
+./setup.sh --production
+./deploy.sh
+
+# Your app will be live at http://localhost:8085
+```
+
+**Docker Cloud Deployment:**
+```bash
+# Deploy to any cloud platform with Docker support:
+
+# AWS ECS/Fargate
+aws ecs create-service --service-name skola \
+  --task-definition skola-task \
+  --desired-count 1
+
+# Google Cloud Run
+gcloud run deploy skola \
+  --source . \
+  --platform managed \
+  --allow-unauthenticated
+
+# DigitalOcean App Platform
+# Just connect your GitHub repo with docker-compose.yml
+
+# Railway
+# Connect GitHub repo, Railway auto-detects Docker
+
+# Render
+# Create Web Service from Docker, point to your repo
+```
+
+### 🌐 Web Deployment
 ```bash
 # Build for web production
 bun run build
 
 # Deploy to:
 # - Vercel: Connect your GitHub repo
-# - Netlify: Drag & drop the 'dist' folder
+# - Netlify: Drag & drop the 'web-build' folder
 # - Firebase: Use Firebase Hosting
-# - Any static web host
+# - Any static web host + API on Railway/Render
 ```
 
-### Mobile App Deployment
+### 📱 Mobile App Deployment
 ```bash
-# Build for mobile
-npx expo build:android  # For Android
-npx expo build:ios      # For iOS
+# Build for mobile stores
+npx expo build:android  # For Google Play Store
+npx expo build:ios      # For Apple App Store
 
 # Or use Expo Application Services (EAS)
 npx eas build --platform android
 npx eas build --platform ios
+
+# Submit to stores
+npx eas submit --platform android
+npx eas submit --platform ios
 ```
 
-### Full-Stack Deployment
-```bash
-# Use Docker for production
-docker-compose -f docker-compose.prod.yml up -d
+### ☁️ Cloud Platform Deployment
 
-# Or deploy to:
-# - Railway
-# - Render
-# - AWS/GCP/Azure
-# - DigitalOcean App Platform
+**Backend API Deployment:**
+```bash
+# Railway (Recommended)
+# 1. Connect GitHub repo
+# 2. Deploy backend folder
+# 3. Set environment variables
+# 4. Get API URL for frontend
+
+# Render
+# 1. Create Web Service
+# 2. Connect GitHub repo
+# 3. Set build command: npm run build
+# 4. Set start command: npm start
+```
+
+**Database Deployment:**
+```bash
+# Use managed PostgreSQL:
+# - Railway PostgreSQL (Free tier available)
+# - Render PostgreSQL
+# - AWS RDS PostgreSQL
+# - Google Cloud SQL
+# - DigitalOcean Managed Databases
 ```
 
 ---
@@ -377,11 +552,65 @@ npx expo start --clear
 npx expo start --tunnel
 ```
 
+### Docker Troubleshooting
+
+**❌ "Docker not running"**
+```bash
+# Start Docker service
+sudo systemctl start docker  # Linux
+# Or open Docker Desktop on Mac/Windows
+```
+
+**❌ "Port already in use"**
+```bash
+# Find what's using the port
+lsof -i :3000  # or :8085, :5432
+
+# Stop conflicting service or change ports in docker-compose.yml
+docker-compose down
+```
+
+**❌ "Permission denied"**
+```bash
+# Fix Docker permissions (Linux)
+sudo usermod -aG docker $USER
+# Logout and login again, or run: newgrp docker
+```
+
+**❌ "Database connection failed"**
+```bash
+# Check database status
+docker-compose logs postgres
+
+# Reset database
+docker-compose down -v  # Removes volumes
+docker-compose up -d postgres
+```
+
+**❌ "Frontend not accessible"**
+```bash
+# Check frontend logs
+docker-compose logs frontend
+
+# Rebuild frontend
+docker-compose up -d --build frontend
+```
+
+**❌ "Out of disk space"**
+```bash
+# Clean up Docker
+docker system prune -a --volumes
+
+# Or clean up specific images
+docker-compose down --rmi all
+```
+
 ### Getting Help
-1. **Check the logs**: `bun run docker:logs`
-2. **View database**: `bun run db:studio`
-3. **Restart services**: `./stop.sh && ./start.sh`
-4. **Create an issue** on GitHub with error details
+1. **Check the logs**: `docker-compose logs -f`
+2. **View service status**: `docker-compose ps`
+3. **Restart services**: `docker-compose restart`
+4. **Clean restart**: `docker-compose down && docker-compose up -d`
+5. **Create an issue** on GitHub with error details
 
 ---
 
@@ -414,22 +643,65 @@ npx expo start --tunnel
 
 ```
 skola/
-├── app/                    # Expo/React Native app
-│   ├── (auth)/            # Authentication screens
-│   ├── (tabs)/            # Main app tabs
-│   └── ...                # Other screens
-├── backend/               # Fastify API server
-│   ├── db/               # Database schemas & migrations
-│   ├── src/              # Server source code
-│   └── package.json      # Backend dependencies
-├── components/           # Reusable UI components
-├── hooks/               # Custom React hooks
-├── lib/                 # Utilities and configurations
-├── constants/           # App constants (colors, etc.)
-├── types/               # TypeScript type definitions
-├── setup.sh             # One-time setup script
-├── start.sh             # Application startup script
-└── stop.sh              # Application shutdown script
+├── 📱 app/                    # React Native (Expo Router)
+│   ├── (auth)/               # Authentication flow screens
+│   ├── (tabs)/               # Main app navigation tabs
+│   ├── unit/[id].tsx         # Dynamic unit detail pages
+│   ├── assignment/[id].tsx   # Assignment detail pages
+│   ├── group/[id].tsx        # Group detail pages
+│   ├── _layout.tsx           # Root layout & navigation
+│   └── +not-found.tsx        # 404 error page
+│
+├── 🔧 backend/               # Fastify API Server
+│   ├── src/
+│   │   ├── server.js         # Main server entry point
+│   │   └── routes/           # tRPC route definitions
+│   ├── db/
+│   │   ├── schema.js         # Database schema (Drizzle ORM)
+│   │   └── index.js          # Database connection
+│   ├── drizzle.config.js     # Drizzle configuration
+│   └── README.md             # Backend documentation
+│
+├── 🧩 components/            # Reusable UI Components
+│   ├── Button.tsx            # Universal button component
+│   ├── Input.tsx             # Form input with validation
+│   ├── UnitCard.tsx          # Course unit display card
+│   ├── AnnouncementCard.tsx  # Announcement display
+│   ├── AssignmentCard.tsx    # Assignment display
+│   ├── EmptyState.tsx        # Empty state placeholder
+│   ├── TimetableWidget.tsx   # Schedule/timetable display
+│   └── index.ts              # Component library exports
+│
+├── 🎣 hooks/                 # Custom React Hooks
+│   ├── auth-store.ts         # Authentication state management
+│   ├── units-store.ts        # Academic data management
+│   └── use-profile-photo.ts  # Profile photo handling
+│
+├── 📊 lib/                   # Utilities & API Configuration
+│   ├── trpc/                 # tRPC client setup
+│   └── trpc-hooks.ts         # Auto-generated tRPC hooks
+│
+├── 🎨 constants/             # App Constants
+│   └── colors.ts             # Color theme definitions
+│
+├── 📋 types/                 # TypeScript Definitions
+│   ├── index.ts              # Core data models
+│   └── store-types.ts        # Store state types
+│
+├── 🧪 mocks/                 # Development Mock Data
+│   └── data.ts               # Sample users, units, etc.
+│
+├── 📚 providers/             # React Context Providers
+│   └── app-providers.tsx     # Global state & API setup
+│
+├── 🛠️ setup.sh               # One-time project setup
+├── 🚀 start.sh               # Development startup script
+├── 🛑 stop.sh                # Development shutdown script
+│
+├── 📖 PROJECT_OVERVIEW.md    # Complete project overview
+├── 🚀 DEVELOPER_QUICK_START.md # Quick development guide
+├── 📖 Developer.md           # Technical documentation
+└── 🐳 docker files          # Containerization configs
 ```
 
 ---

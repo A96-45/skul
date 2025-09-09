@@ -97,11 +97,13 @@ export default function DiscoverScreen() {
   };
 
   const renderUnitItem = ({ item }: { item: Unit }) => {
-    const isRestricted = user?.role === "student" && 
-      item.restrictedTo && 
-      item.restrictedTo.length > 0 && 
+    const isRestricted = Boolean(
+      user?.role === "student" &&
+      item.restrictedTo &&
+      item.restrictedTo.length > 0 &&
       user.admissionNumber &&
-      !item.restrictedTo.some(pattern => user.admissionNumber?.startsWith(pattern));
+      !item.restrictedTo.some(pattern => user.admissionNumber?.startsWith(pattern))
+    );
 
     return (
       <View style={styles.unitContainer}>
