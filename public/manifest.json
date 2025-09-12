@@ -1,0 +1,77 @@
+{
+  "name": "Skola - University Communication Platform",
+  "short_name": "Skola",
+  "description": "Your Complete University Management Solution - Connect students and lecturers in a seamless digital ecosystem",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#007AFF",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US",
+  "dir": "ltr",
+  "categories": ["education", "productivity", "communication"],
+  "icons": [
+    {
+      "src": "/assets/images/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/images/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/images/favicon.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/favicon.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Home",
+      "description": "Go to main dashboard",
+      "url": "/",
+      "icons": [{ "src": "/assets/images/icon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "My Units",
+      "short_name": "Units",
+      "description": "View enrolled units",
+      "url": "/units",
+      "icons": [{ "src": "/assets/images/icon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Assignments",
+      "short_name": "Tasks",
+      "description": "View assignments and submissions",
+      "url": "/assignments",
+      "icons": [{ "src": "/assets/images/icon.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/dashboard.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Skola Dashboard - Main interface"
+    },
+    {
+      "src": "/screenshots/mobile-dashboard.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Skola Mobile Dashboard"
+    }
+  ]
+}

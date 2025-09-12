@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#007AFF" />
+
+  <!-- PWA Meta Tags -->
+  <meta name="description" content="Your Complete University Management Solution - Connect students and lecturers in a seamless digital ecosystem" />
+  <meta name="author" content="Skola Team" />
+  <meta name="keywords" content="university, education, students, lecturers, assignments, courses, communication" />
+
+  <!-- PWA Manifest and Icons -->
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon.png" />
+  <link rel="apple-touch-icon" href="/assets/images/icon.png" />
+
+  <!-- Apple PWA Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Skola" />
+
+  <!-- Microsoft PWA Meta Tags -->
+  <meta name="msapplication-TileColor" content="#007AFF" />
+  <meta name="msapplication-config" content="/browserconfig.xml" />
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="Skola - University Communication Platform" />
+  <meta property="og:description" content="Your Complete University Management Solution" />
+  <meta property="og:image" content="/assets/images/icon.png" />
+  <meta property="og:url" content="/" />
+  <meta property="og:type" content="website" />
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Skola - University Communication Platform" />
+  <meta name="twitter:description" content="Your Complete University Management Solution" />
+  <meta name="twitter:image" content="/assets/images/icon.png" />
+
+  <!-- Preload critical resources -->
+  <link rel="preload" href="/_expo/static/js/web/AppEntry-*.js" as="script" />
+  <link rel="preload" href="/_expo/static/css/app-*.css" as="style" />
+
+  <title>Skola - University Communication Platform</title>
+
+  <!-- PWA Install Prompt Styles -->
+  <style>
+    .pwa-install-prompt {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      padding: 16px;
+      z-index: 1000;
+      display: none;
+      border: 1px solid #e1e5e9;
+    }
+
+    .pwa-install-prompt.show {
+      display: block;
+    }
+
+    .pwa-install-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .pwa-install-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      margin-right: 12px;
+      background: linear-gradient(135deg, #007AFF, #0056CC);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+    }
+
+    .pwa-install-content h3 {
+      margin: 0 0 4px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .pwa-install-content p {
+      margin: 0;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .pwa-install-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .pwa-install-btn {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    .pwa-install-btn.primary {
+      background: #007AFF;
+      color: white;
+    }
+
+    .pwa-install-btn.primary:hover {
+      background: #0056CC;
+    }
+
+    .pwa-install-btn.secondary {
+      background: #f5f5f5;
+      color: #666;
+    }
+
+    .pwa-install-btn.secondary:hover {
+      background: #e5e5e5;
+    }
+
+    .offline-indicator {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      background: #ff6b35;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      text-align: center;
+      z-index: 999;
+      display: none;
+      box-shadow: 0 2px 10px rgba(255, 107, 53, 0.3);
+    }
+
+    .offline-indicator.show {
+      display: block;
+    }
+
+    @media (max-width: 480px) {
+      .pwa-install-prompt {
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div style="
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      text-align: center;
+      padding: 20px;
+    ">
+      <h1>🔧 JavaScript Required</h1>
+      <p>Please enable JavaScript to use Skola. This application requires JavaScript to function properly.</p>
+      <p>If you're seeing this message, please check your browser settings and try again.</p>
+    </div>
+  </noscript>
+
+  <!-- Offline Indicator -->
+  <div id="offline-indicator" class="offline-indicator">
+    🔌 You're currently offline. Some features may be limited.
+  </div>
+
+  <!-- PWA Install Prompt -->
+  <div id="pwa-install-prompt" class="pwa-install-prompt">
+    <div class="pwa-install-header">
+      <div class="pwa-install-icon">📚</div>
+      <div class="pwa-install-content">
+        <h3>Install Skola</h3>
+        <p>Get the full app experience with offline access and desktop shortcuts.</p>
+      </div>
+    </div>
+    <div class="pwa-install-buttons">
+      <button id="pwa-install-dismiss" class="pwa-install-btn secondary">Not Now</button>
+      <button id="pwa-install-accept" class="pwa-install-btn primary">Install App</button>
+    </div>
+  </div>
+
+  <!-- Expo Web App Container -->
+  <div id="root"></div>
+
+  <!-- PWA JavaScript -->
+  <script>
+    // PWA Install Prompt Logic
+    let deferredPrompt;
+    const installPrompt = document.getElementById('pwa-install-prompt');
+    const installButton = document.getElementById('pwa-install-accept');
+    const dismissButton = document.getElementById('pwa-install-dismiss');
+    const offlineIndicator = document.getElementById('offline-indicator');
+
+    // Check if already installed
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      console.log('PWA is already installed');
+    }
+
+    // Before install prompt event
+    window.addEventListener('beforeinstallprompt', (e) => {
+      console.log('PWA install prompt triggered');
+      e.preventDefault();
+      deferredPrompt = e;
+
+      // Show install prompt after a delay
+      setTimeout(() => {
+        if (!window.matchMedia('(display-mode: standalone)').matches) {
+          installPrompt.classList.add('show');
+        }
+      }, 3000);
+    });
+
+    // Install button click
+    installButton.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('PWA install outcome:', outcome);
+        deferredPrompt = null;
+        installPrompt.classList.remove('show');
+      }
+    });
+
+    // Dismiss button click
+    dismissButton.addEventListener('click', () => {
+      installPrompt.classList.remove('show');
+      // Remember user choice for 7 days
+      localStorage.setItem('pwa-install-dismissed', Date.now().toString());
+    });
+
+    // App installed event
+    window.addEventListener('appinstalled', () => {
+      console.log('PWA was installed');
+      installPrompt.classList.remove('show');
+      deferredPrompt = null;
+    });
+
+    // Check if user previously dismissed
+    const dismissedTime = localStorage.getItem('pwa-install-dismissed');
+    if (dismissedTime) {
+      const daysSinceDismissed = (Date.now() - parseInt(dismissedTime)) / (1000 * 60 * 60 * 24);
+      if (daysSinceDismissed < 7) {
+        // Don't show prompt for 7 days
+        return;
+      }
+    }
+
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('Service Worker registered successfully:', registration.scope);
+
+            // Check for updates
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              if (newWorker) {
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    // New version available
+                    console.log('New PWA version available');
+                    // You could show a notification here
+                  }
+                });
+              }
+            });
+          })
+          .catch((error) => {
+            console.error('Service Worker registration failed:', error);
+          });
+      });
+    }
+
+    // Online/Offline Detection
+    function updateOnlineStatus() {
+      const isOnline = navigator.onLine;
+      console.log('Network status changed:', isOnline ? 'online' : 'offline');
+
+      if (isOnline) {
+        offlineIndicator.classList.remove('show');
+      } else {
+        offlineIndicator.classList.add('show');
+      }
+    }
+
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+
+    // Initial status check
+    updateOnlineStatus();
+
+    // Performance monitoring (optional)
+    if ('performance' in window && 'PerformanceObserver' in window) {
+      try {
+        // Monitor Core Web Vitals
+        const observer = new PerformanceObserver((list) => {
+          for (const entry of list.getEntries()) {
+            console.log('PWA Performance:', entry.name, entry.value);
+          }
+        });
+
+        observer.observe({ entryTypes: ['measure'] });
+      } catch (e) {
+        console.log('Performance monitoring not available');
+      }
+    }
+
+    // Error handling
+    window.addEventListener('error', (event) => {
+      console.error('PWA Error:', event.error);
+      // You could send this to an error reporting service
+    });
+
+    window.addEventListener('unhandledrejection', (event) => {
+      console.error('PWA Unhandled Promise Rejection:', event.reason);
+      // You could send this to an error reporting service
+    });
+
+    console.log('🎉 Skola PWA initialized successfully!');
+  </script>
+</body>
+</html>

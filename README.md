@@ -30,15 +30,14 @@ A comprehensive fullstack application for university communication, built with R
 
 ## 🚀 Quick Start Guide
 
-### ⚡ Method 1: One-Command Setup (Recommended)
+### ⚡ Method 1: PWA Setup (Recommended)
 ```bash
 git clone <repository-url>
 cd skola
-chmod +x setup.sh start.sh stop.sh
-./setup.sh
-./start.sh
+chmod +x setup-pwa.sh
+./setup-pwa.sh
 ```
-**That's it! 🎉** Your app will be running at `http://localhost:8085`
+**That's it! 🎉** Your installable PWA will be running at `http://localhost:8080`
 
 ### 📖 Method 2: Developer Quick Start
 For a detailed development setup guide:
@@ -428,14 +427,18 @@ const { data } = trpc.newFeature.getData.useQuery()
 # Your app will be live at http://localhost:8085
 ```
 
-**Docker Cloud Deployment:**
+**Cloud Platform Deployment:**
 ```bash
-# Deploy to any cloud platform with Docker support:
+# Deploy to any cloud platform:
+
+# Azure Container Instances (Recommended)
+./deploy-azure.sh
 
 # AWS ECS/Fargate
-aws ecs create-service --service-name skola \
-  --task-definition skola-task \
-  --desired-count 1
+./deploy-aws.sh
+
+# Railway (Simplest)
+# Connect GitHub repo, Railway auto-detects project
 
 # Google Cloud Run
 gcloud run deploy skola \
@@ -445,9 +448,6 @@ gcloud run deploy skola \
 
 # DigitalOcean App Platform
 # Just connect your GitHub repo with docker-compose.yml
-
-# Railway
-# Connect GitHub repo, Railway auto-detects Docker
 
 # Render
 # Create Web Service from Docker, point to your repo

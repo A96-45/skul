@@ -1,0 +1,113 @@
+# Skola PWA Dockerfile
+# Builds and serves the Progressive Web App
+
+# Build stage
+FROM node:18-alpine AS builder
+
+# Install build dependencies
+RUN apk add --no-cache \
+    git \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/cache/apk/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+COPY bun.lock ./
+
+# Install dependencies
+RUN npm ci --only=production --omit=dev
+
+# Copy source code
+COPY . .
+
+# Build for web production
+RUN npm run build
+
+# Production stage - serve with nginx
+FROM nginx:alpine AS production
+
+# Install curl for health checks
+RUN apk add --no-cache curl && rm -rf /var/cache/apk/*
+
+# Copy built PWA from builder stage
+COPY --from=builder /app/web-build /usr/share/nginx/html
+
+# Copy PWA-specific files
+COPY --from=builder /app/public/manifest.json /usr/share/nginx/html/manifest.json
+COPY --from=builder /app/public/sw.js /usr/share/nginx/html/sw.js
+COPY --from=builder /app/public/index.html /usr/share/nginx/html/index.html
+
+# Copy custom nginx configuration for PWA
+RUN echo 'server {\
+    listen 80;\
+    server_name localhost;\
+    root /usr/share/nginx/html;\
+    index index.html;\
+    \
+    # Enable gzip compression\
+    gzip on;\
+    gzip_vary on;\
+    gzip_min_length 1024;\
+    gzip_types text/plain text/css text/xml text/javascript application/javascript application/xml+rss application/json;\
+    \
+    # Security headers\
+    add_header X-Frame-Options "SAMEORIGIN" always;\
+    add_header X-XSS-Protection "1; mode=block" always;\
+    add_header X-Content-Type-Options "nosniff" always;\
+    add_header Referrer-Policy "no-referrer-when-downgrade" always;\
+    add_header Content-Security-Policy "default-src '\''self'\'' http: https: data: blob: '\''unsafe-inline'\''" always;\
+    \
+    # PWA manifest and service worker\
+    location = /manifest.json {\
+        expires 1y;\
+        add_header Cache-Control "public, immutable";\
+    }\
+    \
+    location = /sw.js {\
+        expires 1y;\
+        add_header Cache-Control "public, immutable";\
+    }\
+    \
+    # Cache static assets\
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {\
+        expires 1y;\
+        add_header Cache-Control "public, immutable";\
+    }\
+    \
+    # Handle client-side routing\
+    location / {\
+        try_files $uri $uri/ /index.html;\
+        expires 1h;\
+        add_header Cache-Control "public, must-revalidate, proxy-revalidate";\
+    }\
+    \
+    # Health check endpoint\
+    location /health {\
+        access_log off;\
+        return 200 "healthy\n";\
+        add_header Content-Type text/plain;\
+    }\
+}' > /etc/nginx/conf.d/default.conf
+
+# Create necessary directories
+RUN mkdir -p /usr/share/nginx/html/assets/images
+
+# Copy assets (if they exist)
+COPY --from=builder /app/assets/images/icon.png /usr/share/nginx/html/assets/images/ 2>/dev/null || true
+COPY --from=builder /app/assets/images/favicon.png /usr/share/nginx/html/assets/images/ 2>/dev/null || true
+COPY --from=builder /app/assets/images/splash-icon.png /usr/share/nginx/html/assets/images/ 2>/dev/null || true
+
+# Expose port 80
+EXPOSE 80
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost/health || exit 1
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

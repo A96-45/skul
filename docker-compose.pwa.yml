@@ -1,0 +1,140 @@
+# Skola PWA + Backend Docker Setup
+# Complete local development and deployment environment
+# Run: docker-compose -f docker-compose.pwa.yml up -d
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: skola-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: skola_prod
+      POSTGRES_USER: skola_user
+      POSTGRES_PASSWORD: skola_password_2024_secure
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - skola-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U skola_user -d skola_prod"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Backend API Server
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: skola-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://skola_user:skola_password_2024_secure@postgres:5432/skola_prod
+      JWT_SECRET: skola_production_jwt_secret_key_2024_min_64_chars_long_for_security
+      PORT: 3000
+      LOG_LEVEL: info
+      CORS_ORIGIN: http://localhost:8080,http://localhost:3000,http://pwa:80
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - ./backend/logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - skola-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health/check"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # PWA Frontend (Nginx serving static files)
+  pwa:
+    build:
+      context: .
+      dockerfile: Dockerfile.pwa
+    container_name: skola-pwa
+    restart: unless-stopped
+    environment:
+      BACKEND_URL: http://backend:3000
+      API_URL: http://backend:3000
+      TRPC_URL: http://backend:3000/trpc
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - skola-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Redis for caching (optional)
+  redis:
+    image: redis:7-alpine
+    container_name: skola-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - skola-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    profiles:
+      - with-cache
+
+  # PgAdmin for database management (optional)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: skola-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@skola.local
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - skola-network
+    profiles:
+      - with-admin
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  skola-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
