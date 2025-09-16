@@ -1,0 +1,135 @@
+name: Build and Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-docker:
+    name: Build and Push Docker Images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract version from tag
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: |
+            a96-45/skola-backend:${{ env.VERSION }}
+            a96-45/skola-backend:latest
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.frontend
+          push: true
+          tags: |
+            a96-45/skola-frontend:${{ env.VERSION }}
+            a96-45/skola-frontend:latest
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  create-release-assets:
+    name: Create Release Assets
+    runs-on: ubuntu-latest
+    needs: build-docker
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Create versioned install script
+        run: |
+          sed "s/YOUR_USERNAME/a96-45/g" install.sh > skola-installer-${{ env.VERSION }}.sh
+          sed -i "s/v1\.0\.0/${{ env.VERSION }}/g" skola-installer-${{ env.VERSION }}.sh
+          chmod +x skola-installer-${{ env.VERSION }}.sh
+
+      - name: Create versioned docker-compose file
+        run: |
+          sed "s/yourusername/a96-45/g" docker-compose.prod.yml > skola-docker-compose-${{ env.VERSION }}.yml
+
+      - name: Upload install script to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./skola-installer-${{ env.VERSION }}.sh
+          asset_name: skola-installer-${{ env.VERSION }}.sh
+          asset_content_type: application/x-shellscript
+
+      - name: Upload docker-compose to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./skola-docker-compose-${{ env.VERSION }}.yml
+          asset_name: skola-docker-compose-${{ env.VERSION }}.yml
+          asset_content_type: application/x-yaml
+
+      - name: Create build instructions
+        run: |
+          cat > build-mobile-instructions-${{ env.VERSION }}.md << 'EOF'
+          # 📱 Build Mobile Apps for Skola ${{ env.VERSION }}
+
+          ## Prerequisites
+          - Expo account with EAS access
+          - Apple Developer Program membership (for iOS)
+
+          ## Build Android APK
+          ```bash
+          npm install -g @expo/eas-cli
+          npx expo login
+          eas build --platform android --profile production
+          ```
+
+          ## Build iOS IPA
+          ```bash
+          eas build --platform ios --profile production
+          ```
+
+          ## Download and Upload
+          1. Go to https://expo.dev/accounts/your-account/projects/skola/builds
+          2. Download the completed APK/IPA files
+          3. Upload them to this GitHub release as:
+             - `skola-${{ env.VERSION }}-android.apk`
+             - `skola-${{ env.VERSION }}-ios.ipa`
+
+          ## Installation
+          - **Android**: Install the APK directly on your device
+          - **iOS**: Use Xcode/Sideloader to install the IPA file
+          EOF
+
+      - name: Upload build instructions to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./build-mobile-instructions-${{ env.VERSION }}.md
+          asset_name: build-mobile-instructions-${{ env.VERSION }}.md
+          asset_content_type: text/markdown

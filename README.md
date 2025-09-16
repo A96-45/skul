@@ -2,8 +2,8 @@
 
 **"Your Complete University Management Solution"**
 
-[![📱 Download for Mobile](https://img.shields.io/badge/📱_Download_Releases-Get_Started-blue?style=for-the-badge)](https://github.com/YOUR_USERNAME/skola/releases)
-[![💻 Run on Desktop](https://img.shields.io/badge/💻_Desktop_Version-Docker-green?style=for-the-badge)](https://github.com/YOUR_USERNAME/skola/releases)
+[![📱 Download for Mobile](https://img.shields.io/badge/📱_Download_Releases-Get_Started-blue?style=for-the-badge)](https://github.com/a96-45/skul/releases)
+[![💻 Run on Desktop](https://img.shields.io/badge/💻_Desktop_Version-Docker-green?style=for-the-badge)](https://github.com/a96-45/skul/releases)
 [![📖 For Developers](https://img.shields.io/badge/📖_Developer_Docs-Developer.md-orange?style=for-the-badge)](Developer.md)
 
 Skola is a comprehensive university management platform that connects students and lecturers in a seamless digital ecosystem. Download and install just like any mobile app!
@@ -11,7 +11,7 @@ Skola is a comprehensive university management platform that connects students a
 ## 📱 Download Skola
 
 ### **For Mobile Users (iOS & Android)**
-Download the latest APK from our [Releases page](https://github.com/YOUR_USERNAME/skola/releases):
+Download the latest APK/IPA from our [Releases page](https://github.com/a96-45/skul/releases):
 - 📱 **iOS**: Download `.ipa` file and install via Xcode/Sideloader
 - 🤖 **Android**: Download `.apk` file and install directly
 - 🌐 **Web**: Access via browser after desktop installation
@@ -20,10 +20,16 @@ Download the latest APK from our [Releases page](https://github.com/YOUR_USERNAM
 Run your own Skola instance with Docker:
 ```bash
 # Download and run with one command:
-curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/skola/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/a96-45/skul/main/install.sh | bash
 ```
 
 **Access your instance at:** http://localhost:8085
+
+### **📦 Release Assets**
+Each release automatically includes:
+- **Docker Images**: Pre-built and pushed to Docker Hub
+- **Install Scripts**: Versioned installer for your platform
+- **Build Instructions**: For creating mobile APKs/IPAs
 
 ## 🌟 What is Skola?
 
@@ -87,7 +93,7 @@ Skola revolutionizes university communication by providing a single platform whe
 
 ## 📞 Support & Community
 
-- **📧 Issues**: [Report bugs or request features](https://github.com/YOUR_USERNAME/skola/issues)
+- **📧 Issues**: [Report bugs or request features](https://github.com/a96-45/skul/issues)
 - **💬 Community**: Join discussions for help and feedback
 - **📖 Documentation**: [Developer documentation](Developer.md) for contributors
 

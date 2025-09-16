@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Skola University Management System - Desktop Installer
-# Run with: curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/skola/main/install.sh | bash
+# Run with: curl -fsSL https://raw.githubusercontent.com/a96-45/skul/main/install.sh | bash
 #
 # This script installs Skola for universities/institutions who want to run their own instance.
 # For mobile users: Download APK/IPA files directly from GitHub Releases.
@@ -25,7 +25,7 @@ fi
 
 # Download docker-compose.yml from the release
 echo "📥 Downloading application files..."
-curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/skola/v1.0.0/docker-compose.prod.yml -o docker-compose.yml
+curl -fsSL https://raw.githubusercontent.com/a96-45/skul/v1.0.0/docker-compose.prod.yml -o docker-compose.yml
 
 # Create necessary directories
 mkdir -p uploads logs
