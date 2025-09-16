@@ -17,7 +17,6 @@ WORKDIR /app
 
 # Copy package files for dependency installation
 COPY package*.json ./
-COPY bun.lock ./
 
 # Install all dependencies (including dev dependencies for building)
 RUN npm ci

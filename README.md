@@ -28,6 +28,31 @@ A comprehensive fullstack application for university communication, built with R
 
 **📖 [Complete Production Guide](PRODUCTION_DEPLOYMENT.md)**
 
+## ⚡ Quick Install (APK-Style)
+
+**Want to run Skola instantly? Just like installing an APK!**
+
+### One-Command Installation
+```bash
+# Download and run Skola with one command:
+curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/skola/main/install.sh | bash
+```
+
+**That's it!** 🎉 Your university management system will be running at:
+- **Frontend**: http://localhost:8085
+- **API**: http://localhost:3000
+
+### Manual Installation
+If you prefer to download manually:
+1. Go to [Releases](https://github.com/YOUR_USERNAME/skola/releases)
+2. Download `docker-compose.prod.yml`
+3. Run: `docker-compose up -d`
+
+### Requirements
+- Docker & Docker Compose
+- 4GB RAM minimum
+- 10GB free disk space
+
 ## 🚀 Quick Start Guide
 
 ### ⚡ Method 1: PWA Setup (Recommended)
@@ -416,11 +441,52 @@ const { data } = trpc.newFeature.getData.useQuery()
 
 ## 🚀 Deployment Options
 
-### 🐳 Docker Deployment (Recommended)
+### 🌍 **Public Access Deployment** (Anyone Can Access!)
+
+Your PWA can now be accessed by **anyone with internet access** from any device!
+
+#### ⚡ **Option 1: Azure Public Deployment (Full Stack)**
+```bash
+# Deploy complete app to Azure (frontend + backend + database)
+chmod +x deploy-azure-public.sh
+./deploy-azure-public.sh
+```
+**Benefits:**
+- ✅ **Full public access** - Anyone can visit your URL
+- ✅ **Mobile optimized** - Works perfectly on phones/tablets
+- ✅ **Installable PWA** - Users can "Add to Home Screen"
+- ✅ **Database included** - PostgreSQL with automatic setup
+- ✅ **SSL included** - HTTPS for security
+
+#### 🚂 **Option 2: Railway Deployment (Simple)**
+```bash
+# Deploy to Railway (modern cloud platform)
+chmod +x deploy-railway-public.sh
+./deploy-railway-public.sh
+```
+**Benefits:**
+- ✅ **One-command deployment**
+- ✅ **Free tier available**
+- ✅ **GitHub integration**
+- ✅ **Auto-scaling**
+
+#### ⚡ **Option 3: Vercel Deployment (Frontend Only)**
+```bash
+# Quick frontend-only deployment
+chmod +x deploy-vercel.sh
+./deploy-vercel.sh
+```
+**Benefits:**
+- ✅ **Fastest deployment** (~2 minutes)
+- ✅ **Free tier available**
+- ✅ **CDN included** (global speed)
+- ✅ **SSL included**
+
+### 🐳 Docker Deployment (Local/Private)
 
 **One-Command Production Deployment:**
 ```bash
-# Setup and deploy everything
+# Setup and deploy everything locally
 ./setup.sh --production
 ./deploy.sh
 

@@ -62,11 +62,16 @@ fi
 
 print_status "Docker is running ✓"
 
-# Build Docker images
-print_status "Building Docker images..."
-sudo docker build -t skola-pwa:latest .
-sudo docker build -t skola-backend:latest ./backend
-print_status "Docker images built ✓"
+# Install dependencies and build PWA
+print_status "Installing dependencies..."
+npm install --legacy-peer-deps
+print_status "Dependencies installed ✓"
+
+print_status "Building PWA web files..."
+npm run build
+print_status "PWA built ✓"
+
+# Note: Docker images will be built automatically when starting services
 
 # Create necessary directories
 print_status "Setting up directories..."
@@ -78,7 +83,7 @@ print_status "Directories created ✓"
 
 # Start the PWA services
 print_status "Starting PWA services..."
-sudo docker-compose -f docker-compose.pwa.yml up -d
+sudo docker compose -f docker-compose.pwa.yml up -d
 print_status "Services started ✓"
 
 # Wait for services to be ready
@@ -87,11 +92,11 @@ sleep 10
 
 # Check if services are running
 print_status "Checking service status..."
-if sudo docker-compose -f docker-compose.pwa.yml ps | grep -q "Up"; then
+if sudo docker compose -f docker-compose.pwa.yml ps | grep -q "Up"; then
     print_status "All services are running ✓"
 else
     print_warning "Some services may not be running. Checking..."
-    sudo docker-compose -f docker-compose.pwa.yml ps
+    sudo docker compose -f docker-compose.pwa.yml ps
 fi
 
 # Test health endpoints
@@ -124,7 +129,7 @@ read -p "Do you want to start the database admin panel? (y/n): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     print_status "Starting database admin panel..."
-    sudo docker-compose -f docker-compose.pwa.yml --profile with-admin up -d
+    sudo docker compose -f docker-compose.pwa.yml --profile with-admin up -d
     echo -e "${GREEN}📊 PgAdmin:${NC} http://localhost:5050"
     echo -e "${YELLOW}   Email: admin@skola.local${NC}"
     echo -e "${YELLOW}   Password: admin123${NC}"
@@ -138,9 +143,9 @@ echo "3. Enjoy your installable PWA!"
 echo ""
 
 echo -e "${BLUE}🛠️ Management Commands:${NC}"
-echo -e "${YELLOW}   View logs: sudo docker-compose -f docker-compose.pwa.yml logs -f${NC}"
-echo -e "${YELLOW}   Stop services: sudo docker-compose -f docker-compose.pwa.yml down${NC}"
-echo -e "${YELLOW}   Restart: sudo docker-compose -f docker-compose.pwa.yml restart${NC}"
+echo -e "${YELLOW}   View logs: sudo docker compose -f docker-compose.pwa.yml logs -f${NC}"
+echo -e "${YELLOW}   Stop services: sudo docker compose -f docker-compose.pwa.yml down${NC}"
+echo -e "${YELLOW}   Restart: sudo docker compose -f docker-compose.pwa.yml restart${NC}"
 echo ""
 
 echo -e "${GREEN}🎉 Your Skola PWA is now live and installable!${NC}"

@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: skola-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: skola_prod
+      POSTGRES_USER: skola_user
+      POSTGRES_PASSWORD: skola_password_2024_secure
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - skola-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U skola_user -d skola_prod"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  backend:
+    image: yourusername/skola-backend:latest
+    container_name: skola-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://skola_user:skola_password_2024_secure@postgres:5432/skola_prod
+      - JWT_SECRET=skola_production_jwt_secret_key_2024_min_64_chars_long_for_security
+      - PORT=3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - skola-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health/check"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    image: yourusername/skola-frontend:latest
+    container_name: skola-frontend
+    restart: unless-stopped
+    ports:
+      - "8085:80"
+    depends_on:
+      - backend
+    networks:
+      - skola-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  skola-network:
+    driver: bridge

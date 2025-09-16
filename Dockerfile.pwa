@@ -1,46 +1,13 @@
 # Skola PWA Dockerfile
-# Builds and serves the Progressive Web App
+# Serves pre-built Progressive Web App
 
-# Build stage
-FROM node:18-alpine AS builder
-
-# Install build dependencies
-RUN apk add --no-cache \
-    git \
-    python3 \
-    make \
-    g++ \
-    && rm -rf /var/cache/apk/*
-
-# Set working directory
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-COPY bun.lock ./
-
-# Install dependencies
-RUN npm ci --only=production --omit=dev
-
-# Copy source code
-COPY . .
-
-# Build for web production
-RUN npm run build
-
-# Production stage - serve with nginx
-FROM nginx:alpine AS production
+FROM nginx:alpine
 
 # Install curl for health checks
 RUN apk add --no-cache curl && rm -rf /var/cache/apk/*
 
-# Copy built PWA from builder stage
-COPY --from=builder /app/web-build /usr/share/nginx/html
-
-# Copy PWA-specific files
-COPY --from=builder /app/public/manifest.json /usr/share/nginx/html/manifest.json
-COPY --from=builder /app/public/sw.js /usr/share/nginx/html/sw.js
-COPY --from=builder /app/public/index.html /usr/share/nginx/html/index.html
+# Copy pre-built PWA files
+COPY . /usr/share/nginx/html
 
 # Copy custom nginx configuration for PWA
 RUN echo 'server {\
@@ -96,11 +63,6 @@ RUN echo 'server {\
 
 # Create necessary directories
 RUN mkdir -p /usr/share/nginx/html/assets/images
-
-# Copy assets (if they exist)
-COPY --from=builder /app/assets/images/icon.png /usr/share/nginx/html/assets/images/ 2>/dev/null || true
-COPY --from=builder /app/assets/images/favicon.png /usr/share/nginx/html/assets/images/ 2>/dev/null || true
-COPY --from=builder /app/assets/images/splash-icon.png /usr/share/nginx/html/assets/images/ 2>/dev/null || true
 
 # Expose port 80
 EXPOSE 80

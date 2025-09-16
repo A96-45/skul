@@ -18,7 +18,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     ports:
-      - "5432:5432"
+      - "5433:5432"
     networks:
       - skola-network
     healthcheck:
@@ -30,9 +30,7 @@ services:
 
   # Backend API Server
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    build: ./backend
     container_name: skola-backend
     restart: unless-stopped
     environment:
@@ -61,9 +59,9 @@ services:
 
   # PWA Frontend (Nginx serving static files)
   pwa:
-    build:
-      context: .
-      dockerfile: Dockerfile.pwa
+    image: nginx:alpine
+    volumes:
+      - ./dist:/usr/share/nginx/html:ro
     container_name: skola-pwa
     restart: unless-stopped
     environment:
