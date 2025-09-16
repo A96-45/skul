@@ -1,0 +1,31 @@
+{
+  "cli": {
+    "version": ">= 5.9.0"
+  },
+  "build": {
+    "production": {
+      "channel": "production",
+      "android": {
+        "buildType": "apk",
+        "applicationId": "com.skola.university"
+      },
+      "ios": {
+        "bundleIdentifier": "com.skola.university"
+      }
+    },
+    "development": {
+      "channel": "development",
+      "developmentClient": true,
+      "android": {
+        "buildType": "apk",
+        "applicationId": "com.skola.university.dev"
+      },
+      "ios": {
+        "bundleIdentifier": "com.skola.university.dev"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

@@ -1,11 +1,14 @@
 #!/bin/bash
 
-# Skola University Management System - One-Click Installer
+# Skola University Management System - Desktop Installer
 # Run with: curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/skola/main/install.sh | bash
+#
+# This script installs Skola for universities/institutions who want to run their own instance.
+# For mobile users: Download APK/IPA files directly from GitHub Releases.
 
 set -e
 
-echo "🎓 Installing Skola University Management System..."
+echo "🎓 Installing Skola University Management System (Desktop/Server)..."
 
 # Check if Docker is installed
 if ! command -v docker &> /dev/null; then
@@ -46,6 +49,8 @@ if docker-compose ps | grep -q "Up"; then
     echo ""
     echo "🛑 To stop: docker-compose down"
     echo "📝 To view logs: docker-compose logs -f"
+    echo ""
+    echo "📱 For mobile users: Download APK/IPA from https://github.com/YOUR_USERNAME/skola/releases"
 else
     echo "❌ Something went wrong. Check logs with: docker-compose logs"
     exit 1
