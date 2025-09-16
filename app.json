@@ -22,7 +22,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.skola.university"
+      "package": "com.skola.university",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/images/favicon.png"

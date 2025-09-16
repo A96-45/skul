@@ -31,6 +31,43 @@ Each release automatically includes:
 - **Install Scripts**: Versioned installer for your platform
 - **Build Instructions**: For creating mobile APKs/IPAs
 
+## 📱 Mobile Build
+
+### **Building Mobile Apps with Expo EAS**
+
+To build and release mobile apps for Skola:
+
+1. **Install EAS CLI**:
+   ```bash
+   npm install -g eas-cli
+   ```
+
+2. **Login to Expo**:
+   ```bash
+   eas login
+   ```
+
+3. **Build Android APK**:
+   ```bash
+   eas build --platform android --profile production
+   ```
+
+4. **Download the APK**:
+   - Go to your [Expo dashboard](https://expo.dev/accounts)
+   - Navigate to your Skola project builds
+   - Download the completed APK file
+
+5. **Upload to GitHub Release**:
+   - Go to the [Releases page](https://github.com/a96-45/skul/releases)
+   - Find the latest release
+   - Upload the APK as `skola-[version]-android.apk`
+
+### **Available Build Profiles**
+- **Production**: Optimized builds for app stores (`eas build --profile production`)
+- **Development**: Debug builds for testing (`eas build --profile development`)
+
+**Note**: iOS builds require an Apple Developer Program membership and will generate `.ipa` files instead of `.apk`.
+
 ## 🌟 What is Skola?
 
 Skola revolutionizes university communication by providing a single platform where students and lecturers can:

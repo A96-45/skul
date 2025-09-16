@@ -6,22 +6,14 @@
     "production": {
       "channel": "production",
       "android": {
-        "buildType": "apk",
-        "applicationId": "com.skola.university"
-      },
-      "ios": {
-        "bundleIdentifier": "com.skola.university"
+        "buildType": "apk"
       }
     },
     "development": {
       "channel": "development",
       "developmentClient": true,
       "android": {
-        "buildType": "apk",
-        "applicationId": "com.skola.university.dev"
-      },
-      "ios": {
-        "bundleIdentifier": "com.skola.university.dev"
+        "buildType": "apk"
       }
     }
   },

@@ -133,3 +133,112 @@ jobs:
           asset_path: ./build-mobile-instructions-${{ env.VERSION }}.md
           asset_name: build-mobile-instructions-${{ env.VERSION }}.md
           asset_content_type: text/markdown
+
+      - name: Check for APK and create placeholder if missing
+        id: check-apk
+        run: |
+          # Check if APK files exist in the release
+          APK_EXISTS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "${{ github.event.release.upload_url }}" | jq -r '.assets[].name' | grep -c "\.apk$" || true)
+
+          if [ "$APK_EXISTS" -eq "0" ]; then
+            echo "No APK found in release, creating placeholder instructions..."
+            echo "apk_missing=true" >> $GITHUB_OUTPUT
+            cat > apk-build-instructions.md << 'EOF'
+          # 📱 Mobile APK Build Instructions for Skola ${{ env.VERSION }}
+
+          **No APK has been uploaded to this release yet.**
+
+          ## Why build a mobile APK?
+
+          The mobile APK allows users to install Skola as a native Android app on their devices, providing:
+          - Better performance than web version
+          - Offline functionality
+          - Push notifications
+          - Native device integration
+
+          ## How to Build the APK
+
+          ### Prerequisites
+          - Node.js and npm installed
+          - Expo account with EAS access
+          - Android development environment (optional, but recommended)
+
+          ### Step-by-Step Instructions
+
+          1. **Install EAS CLI**:
+             ```bash
+             npm install -g eas-cli
+             ```
+
+          2. **Login to Expo**:
+             ```bash
+             eas login
+             ```
+
+          3. **Clone the repository**:
+             ```bash
+             git clone https://github.com/a96-45/skul.git
+             cd skul
+             ```
+
+          4. **Install dependencies**:
+             ```bash
+             npm install
+             ```
+
+          5. **Build Android APK**:
+             ```bash
+             eas build --platform android --profile production
+             ```
+
+          ### Download and Upload
+
+          1. **Monitor the build**:
+             - Go to https://expo.dev/accounts/your-account/projects/skola/builds
+             - Wait for the build to complete (usually 10-30 minutes)
+
+          2. **Download the APK**:
+             - Click on the completed build
+             - Download the APK file
+
+          3. **Upload to GitHub Release**:
+             - Return to this release page
+             - Click "Edit" on this release
+             - Upload the APK as: `skola-${{ env.VERSION }}-android.apk`
+             - Delete this placeholder file
+
+          ### Troubleshooting
+
+          - **Build fails**: Check the Expo build logs for specific errors
+          - **Login issues**: Make sure your Expo account has EAS access
+          - **Network issues**: Ensure stable internet connection during build
+
+          ### Alternative: Development Build
+
+          For testing purposes, you can build a development version:
+          ```bash
+          eas build --platform android --profile development
+          ```
+
+          ---
+
+          *This file will be automatically replaced once the APK is uploaded to the release.*
+          EOF
+
+            echo "Placeholder instructions created."
+          else
+            echo "APK already exists in release, skipping placeholder creation."
+            echo "apk_missing=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload APK placeholder instructions (if needed)
+        if: steps.check-apk.outputs.apk_missing == 'true'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./apk-build-instructions.md
+          asset_name: apk-build-instructions.md
+          asset_content_type: text/markdown
