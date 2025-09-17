@@ -31,8 +31,8 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           tags: |
-            a96-45/skola-backend:${{ env.VERSION }}
-            a96-45/skola-backend:latest
+            klly704/a96-45-skola-backend:${{ env.VERSION }}
+            klly704/a96-45-skola-backend:latest
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -44,8 +44,8 @@ jobs:
           file: ./Dockerfile.frontend
           push: true
           tags: |
-            a96-45/skola-frontend:${{ env.VERSION }}
-            a96-45/skola-frontend:latest
+            klly704/a96-45-skola-frontend:${{ env.VERSION }}
+            klly704/a96-45-skola-frontend:latest
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -63,13 +63,13 @@ jobs:
 
       - name: Create versioned install script
         run: |
-          sed "s/YOUR_USERNAME/a96-45/g" install.sh > skola-installer-${{ env.VERSION }}.sh
+          sed "s/YOUR_USERNAME/klly704/g" install.sh > skola-installer-${{ env.VERSION }}.sh
           sed -i "s/v1\.0\.0/${{ env.VERSION }}/g" skola-installer-${{ env.VERSION }}.sh
           chmod +x skola-installer-${{ env.VERSION }}.sh
 
       - name: Create versioned docker-compose file
         run: |
-          sed "s/yourusername/a96-45/g" docker-compose.prod.yml > skola-docker-compose-${{ env.VERSION }}.yml
+          sed "s/yourusername/klly704/g" docker-compose.prod.yml > skola-docker-compose-${{ env.VERSION }}.yml
 
       - name: Upload install script to release
         uses: actions/upload-release-asset@v1

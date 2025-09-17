@@ -2,8 +2,8 @@
 
 **"Your Complete University Management Solution"**
 
-[![📱 Download for Mobile](https://img.shields.io/badge/📱_Download_Releases-Get_Started-blue?style=for-the-badge)](https://github.com/a96-45/skul/releases)
-[![💻 Run on Desktop](https://img.shields.io/badge/💻_Desktop_Version-Docker-green?style=for-the-badge)](https://github.com/a96-45/skul/releases)
+[![📱 Download for Mobile](https://img.shields.io/badge/📱_Download_Releases-Get_Started-blue?style=for-the-badge)](https://github.com/A96-45/skul/releases)
+[![💻 Run on Desktop](https://img.shields.io/badge/💻_Desktop_Version-Docker-green?style=for-the-badge)](https://github.com/A96-45/skul/releases)
 [![📖 For Developers](https://img.shields.io/badge/📖_Developer_Docs-Developer.md-orange?style=for-the-badge)](Developer.md)
 
 Skola is a comprehensive university management platform that connects students and lecturers in a seamless digital ecosystem. Download and install just like any mobile app!
@@ -11,7 +11,7 @@ Skola is a comprehensive university management platform that connects students a
 ## 📱 Download Skola
 
 ### **For Mobile Users (iOS & Android)**
-Download the latest APK/IPA from our [Releases page](https://github.com/a96-45/skul/releases):
+Download the latest APK/IPA from our [Releases page](https://github.com/A96-45/skul/releases):
 - 📱 **iOS**: Download `.ipa` file and install via Xcode/Sideloader
 - 🤖 **Android**: Download `.apk` file and install directly
 - 🌐 **Web**: Access via browser after desktop installation
@@ -58,7 +58,7 @@ To build and release mobile apps for Skola:
    - Download the completed APK file
 
 5. **Upload to GitHub Release**:
-   - Go to the [Releases page](https://github.com/a96-45/skul/releases)
+   - Go to the [Releases page](https://github.com/A96-45/skul/releases)
    - Find the latest release
    - Upload the APK as `skola-[version]-android.apk`
 
@@ -130,7 +130,7 @@ Skola revolutionizes university communication by providing a single platform whe
 
 ## 📞 Support & Community
 
-- **📧 Issues**: [Report bugs or request features](https://github.com/a96-45/skul/issues)
+- **📧 Issues**: [Report bugs or request features](https://github.com/A96-45/skul/issues)
 - **💬 Community**: Join discussions for help and feedback
 - **📖 Documentation**: [Developer documentation](Developer.md) for contributors
 

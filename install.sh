@@ -25,7 +25,7 @@ fi
 
 # Download docker-compose.yml from the release
 echo "📥 Downloading application files..."
-curl -fsSL https://raw.githubusercontent.com/a96-45/skul/v1.0.0/docker-compose.prod.yml -o docker-compose.yml
+curl -fsSL https://raw.githubusercontent.com/A96-45/skul/main/docker-compose.prod.yml -o docker-compose.yml
 
 # Create necessary directories
 mkdir -p uploads logs
