@@ -8,7 +8,7 @@
     "start:web": "CI=1 bunx expo start --web --clear --port 8085",
     "start:dev": "CI=1 bunx expo start --clear",
     "dev": "bun run start",
-    "build": "npx expo export --platform web",
+    "build": "npx expo export --platform web --output-dir web-build",
     "backend": "cd backend && bun run dev",
     "backend:dev": "cd backend && bun run dev",
     "db:generate": "bunx drizzle-kit generate",
